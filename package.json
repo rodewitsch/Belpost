@@ -1,5 +1,12 @@
 {
+  "name": "belpost",
   "main": "node_modules/expo/AppEntry.js",
+  "version": "1.0.0",
+  "author": {
+    "email": "rodewitsch@inbox.ru",
+    "name": "Rodevich Dmitry",
+    "url": "https://vk.com/rodewitsch"
+  },
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -34,6 +41,5 @@
   "devDependencies": {
     "babel-preset-expo": "^7.0.0",
     "jest-expo": "^35.0.0"
-  },
-  "private": true
+  }
 }
