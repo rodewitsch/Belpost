@@ -3,8 +3,20 @@ import * as Font from 'expo-font';
 import React, { useState } from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Provider, connect } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import reducer from './store/reducer';
+import axios from 'axios';
+import axiosMiddleware from 'redux-axios-middleware';
 
 import AppNavigator from './navigation/AppNavigator';
+
+const client = axios.create({
+  baseURL: 'https://webservices.belpost.by/PersonalCabinet',
+  responseType: 'text'
+});
+
+const store = createStore(reducer, applyMiddleware(axiosMiddleware(client)));
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
@@ -19,10 +31,12 @@ export default function App(props) {
     );
   } else {
     return (
-      <View style={styles.container}>
-        {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-        <AppNavigator />
-      </View>
+      <Provider store={store}>
+        <View style={styles.container}>
+          {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+          <AppNavigator />
+        </View>
+      </Provider>
     );
   }
 }
