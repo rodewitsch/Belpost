@@ -1,58 +1,62 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import {
-    AsyncStorage,
     Button,
     Text,
     StyleSheet,
     TextInput,
     View,
     Image
-} from 'react-native';
+} from 'react-native'
+import { getCookiesAsync } from '../store/actions/profile';
 
-export default function AuthLoadingScreen({ navigation }) {
-    function signIn() {
-        navigation.navigate('App');
+class AuthLoadingScreen extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.dispatch = props.dispatch;
+        this.email = '';
+        this.password = '';
     }
 
-    const [email, onChangeEmail] = React.useState('');
-    const [password, onChangePassword] = React.useState('');
+    componentDidMount() {
+        this.dispatch(getCookiesAsync());
+    }
 
-    // Render any loading content that you like here
-    return (
-        <View style={styles.container}>
+    render() {
+        return (
+            <View style={styles.container}>
 
-            <Image
-                style={{ height: 100, marginBottom: 50 }}
-                resizeMode="center"
-                source={require('../assets/images/belpost_logo.jpg')} />
+                <Image
+                    style={{ height: 100, marginBottom: 50 }}
+                    resizeMode="contain"
+                    source={require('../assets/images/belpost_logo.jpg')} />
 
-            <Text style={{textAlign: "center", marginBottom: 30, fontSize: 20}}>Авторизация</Text>
+                <Text style={{ textAlign: "center", marginBottom: 30, fontSize: 20 }}>Авторизация</Text>
 
-            <View style={styles.input}>
-                <Text>Email</Text>
-                <TextInput
-                    style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-                    onChangeText={text => onChangeEmail(text)}
-                    value={email}
+                <View style={styles.input}>
+                    <Text>Email</Text>
+                    <TextInput
+                        style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+                        value={this.email}
+                    />
+                </View>
+
+                <View style={styles.input}>
+                    <Text>Пароль</Text>
+                    <TextInput
+                        style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+                        value={this.password}
+                    />
+                </View>
+
+                <Button
+                    title="Войти"
+                    onPress={() => (this.dispatch(signIn(this.email, this.password)))}
                 />
-            </View>
-
-            <View style={styles.input}>
-                <Text>Пароль</Text>
-                <TextInput
-                    style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-                    onChangeText={text => onChangePassword(text)}
-                    value={password}
-                />
-            </View>
-
-            <Button
-                title="Войти"
-                onPress={signIn}
-            />
-
-        </View >
-    );
+            </View >
+        )
+    }
 }
 
 const styles = StyleSheet.create({
@@ -66,3 +70,5 @@ const styles = StyleSheet.create({
         marginBottom: 20
     }
 });
+
+export default connect()(AuthLoadingScreen)
