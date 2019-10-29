@@ -31,7 +31,6 @@ export function getCookiesAsync() {
             )
             .then(function (headers) {
                 const cookies = headers.map['set-cookie'];
-                alert(cookies);
                 dispatch(RECEIVE_COOKIES(cookies));
             })
     }

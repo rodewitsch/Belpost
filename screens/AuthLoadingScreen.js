@@ -14,25 +14,27 @@ class AuthLoadingScreen extends React.Component {
 
     constructor(props) {
         super(props);
-        this.dispatch = props.dispatch;
         this.email = '';
         this.password = '';
     }
 
     componentDidMount() {
-        this.dispatch(getCookiesAsync());
+        this.props.getCookies();
     }
 
     render() {
         return (
             <View style={styles.container}>
+                
+                <View style={{ display: 'flex', alignItems: 'center' }}>
+                    <Image
+                        style={{ height: 100, marginBottom: 50 }}
+                        resizeMode="contain"
+                        source={require('../assets/images/belpost_logo.jpg')} />
 
-                <Image
-                    style={{ height: 100, marginBottom: 50 }}
-                    resizeMode="contain"
-                    source={require('../assets/images/belpost_logo.jpg')} />
+                </View>
 
-                <Text style={{ textAlign: "center", marginBottom: 30, fontSize: 20 }}>Авторизация</Text>
+                <Text style={{ textAlign: "center", marginBottom: 30, fontSize: 30 }}>Авторизация</Text>
 
                 <View style={styles.input}>
                     <Text>Email</Text>
@@ -71,4 +73,15 @@ const styles = StyleSheet.create({
     }
 });
 
-export default connect()(AuthLoadingScreen)
+const mapStateToProps = state => ({
+    cookies: state.profile.cookies.value
+});
+
+const mapDispatchToProps = dispatch => ({
+    getCookies: () => dispatch(getCookiesAsync())
+})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(AuthLoadingScreen)
