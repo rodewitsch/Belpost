@@ -17,14 +17,14 @@ const initialState = {
 
 const profile = (state = initialState, action) => {
     switch (action.type) {
-        case 'REQUEST_COOKIES': ({
+        case 'REQUEST_COOKIES': return {
             ...state,
             cookies: { isFetching: true, value: null }
-        })
-        case 'RECEIVE_COOKIES': ({
+        }
+        case 'RECEIVE_COOKIES': return {
             ...state,
-            cookies: { isFetching: false, value: action.cookies }
-        })
+            cookies: { isFetching: true, value: action.cookies }
+        }
         case 'SIGN_IN': ({
             ...state,
             authorization: { status: true },
