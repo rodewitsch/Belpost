@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import {
     Button,
@@ -8,57 +8,64 @@ import {
     View,
     Image
 } from 'react-native'
-import { getCookiesAsync } from '../store/actions/profile';
+import { getCookiesAsync, signIn } from '../store/actions/profile';
 
-class AuthLoadingScreen extends React.Component {
+function AuthLoadingScreen(props) {
 
-    constructor(props) {
-        super(props);
-        this.email = '';
-        this.password = '';
+    const [email, onChangeEmail] = useState('');
+    const [password, onChangePassword] = useState('');
+
+
+    const signIn = () => {
+        props.signIn(email, password);
     }
 
-    componentDidMount() {
-        this.props.getCookies();
-    }
+    useEffect(() => {
+        if (!props.cookies) props.getCookies();
+        if (props.authorization.status) props.navigation.navigate('Profile');
+        if (props.authorization.error) alert(props.authorization.error);
+    })
 
-    render() {
-        return (
-            <View style={styles.container}>
-                
-                <View style={{ display: 'flex', alignItems: 'center' }}>
-                    <Image
-                        style={{ height: 100, marginBottom: 50 }}
-                        resizeMode="contain"
-                        source={require('../assets/images/belpost_logo.jpg')} />
+    return (
+        <View style={styles.container}>
 
-                </View>
+            <View style={{ display: 'flex', alignItems: 'center' }}>
+                <Image
+                    style={{ height: 100, marginBottom: 50 }}
+                    resizeMode="contain"
+                    source={require('../assets/images/belpost_logo.jpg')} />
 
-                <Text style={{ textAlign: "center", marginBottom: 30, fontSize: 30 }}>Авторизация</Text>
+            </View>
 
-                <View style={styles.input}>
-                    <Text>Email</Text>
-                    <TextInput
-                        style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-                        value={this.email}
-                    />
-                </View>
+            <Text style={{ textAlign: "center", marginBottom: 30, fontSize: 30 }}>Авторизация</Text>
 
-                <View style={styles.input}>
-                    <Text>Пароль</Text>
-                    <TextInput
-                        style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-                        value={this.password}
-                    />
-                </View>
-
-                <Button
-                    title="Войти"
-                    onPress={() => (this.dispatch(signIn(this.email, this.password)))}
+            <View style={styles.input}>
+                <Text>Email</Text>
+                <TextInput
+                    autoCompleteType="email"
+                    style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+                    onChangeText={text => onChangeEmail(text)}
+                    value={email}
                 />
-            </View >
-        )
-    }
+            </View>
+
+            <View style={styles.input}>
+                <Text>Пароль</Text>
+                <TextInput
+                    autoCompleteType="password"
+                    secureTextEntry={true}
+                    style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+                    onChangeText={text => onChangePassword(text)}
+                    value={password}
+                />
+            </View>
+
+            <Button
+                title="Войти"
+                onPress={() => signIn()}
+            />
+        </View >
+    )
 }
 
 const styles = StyleSheet.create({
@@ -74,11 +81,13 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
-    cookies: state.profile.cookies.value
+    cookies: state.profile.cookies.value,
+    authorization: state.profile.authorization
 });
 
 const mapDispatchToProps = dispatch => ({
-    getCookies: () => dispatch(getCookiesAsync())
+    getCookies: () => dispatch(getCookiesAsync()),
+    signIn: (email, password) => dispatch(signIn(email, password))
 })
 
 export default connect(

@@ -15,7 +15,7 @@ const config = Platform.select({
 
 const ProfileStack = createStackNavigator(
   {
-    Profil: ProfileScreen,
+    Profile: ProfileScreen,
   },
   config
 );

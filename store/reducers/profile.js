@@ -1,5 +1,3 @@
-
-
 const initialState = {
     cookies: {
         isFetching: false,
@@ -7,7 +5,8 @@ const initialState = {
     },
     authorization: {
         isFetching: false,
-        status: false
+        status: false,
+        error: ''
     },
     profile: {
         isFetching: false,
@@ -25,11 +24,20 @@ const profile = (state = initialState, action) => {
             ...state,
             cookies: { isFetching: true, value: action.cookies }
         }
-        case 'SIGN_IN': ({
+        case 'SIGNING_IN': return {
             ...state,
-            authorization: { status: true },
-            profile: { name: action.name }
-        })
+            authorization: { isFetching: true, status: false, error: '' }
+        }
+        case 'SIGNED_IN': return {
+            ...state,
+            authorization: { isFetching: false, status: true, error: '' },
+            profile: { isFetching: false, name: action.user }
+        }
+        case 'SIGNING_ERROR': return {
+            ...state,
+            authorization: { isFetching: false, status: false, error: 'Ошибка авторизации' },
+            profile: { isFetching: false, name: null }
+        }
         case 'SIGN_OUT':
             return initialState
         default:
