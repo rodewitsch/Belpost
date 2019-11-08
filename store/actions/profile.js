@@ -80,8 +80,7 @@ export function signIn(email, password) {
                 error => console.log('error', error)
             )
             .then(function (user) {
-                const userName = user.match(/<span id="LblEnter"><b>Здравствуйте, (.*)<\/b><\/span>/);
-                console.log(userName);
+                const userName = (user.match(/<span id="LblEnter"><b>Здравствуйте, (.*)<\/b><\/span>/) || [])[1];
                 if (userName) return dispatch(SIGNED_IN(userName));
                 dispatch(SIGNING_ERROR('Ошибка авторизации'));
                 dispatch(SIGN_OUT());
