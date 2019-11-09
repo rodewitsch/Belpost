@@ -7,6 +7,7 @@ import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 import ServicesScreen from '../screens/ServicesScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import ProfileDataScreen from '../screens/ProfileDataScreen';
 
 const config = Platform.select({
   web: { headerMode: 'screen' },
@@ -16,6 +17,7 @@ const config = Platform.select({
 const ProfileStack = createStackNavigator(
   {
     Profile: ProfileScreen,
+    ProfileData: ProfileDataScreen
   },
   config
 );
