@@ -4,12 +4,11 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  View,
-  TouchableNativeFeedback
+  View
 } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
-import { Ionicons } from '@expo/vector-icons';
 import { FlatList } from 'react-native-gesture-handler';
+import ProfileItem from '../components/ProfileItems';
 
 const DATA = [
   {
@@ -17,7 +16,7 @@ const DATA = [
     title: 'Личные данные',
     icon: 'md-person',
     color: '#1272d4',
-    action: () => console.log('Личные данные')
+    action: (navigation) => navigation.navigate('ProfileData')
   },
   {
     id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
@@ -42,27 +41,6 @@ const DATA = [
   },
 ];
 
-
-function Item({ title, icon, color, action, navigation }) {
-  return (
-    <TouchableNativeFeedback
-      onPress={() => action(navigation)}>
-      <View style={styles.item}>
-        <View style={{ ...styles.iconWrapper, backgroundColor: color }}>
-          <Ionicons
-            name={icon}
-            size={26}
-            style={styles.icon}
-            color="white"
-          />
-        </View>
-        <Text style={styles.title}>{title}</Text>
-      </View>
-    </TouchableNativeFeedback>
-
-  );
-}
-
 export function HomeScreen(props) {
   return (
     <View style={styles.container}>
@@ -77,7 +55,7 @@ export function HomeScreen(props) {
           <SafeAreaView style={styles.container}>
             <FlatList
               data={DATA}
-              renderItem={({ item }) => <Item {...{ ...item, navigation: props.navigation }} />}
+              renderItem={({ item }) => <ProfileItem {...{ ...item, navigation: props.navigation }} />}
               keyExtractor={item => item.id}
             />
           </SafeAreaView>
