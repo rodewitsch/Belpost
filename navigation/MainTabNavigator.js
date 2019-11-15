@@ -8,6 +8,9 @@ import ServicesScreen from '../screens/ServicesScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import ProfileDataScreen from '../screens/ProfileDataScreen';
+import ProfileChangePass from '../screens/ProfileChangePass';
+import ProfileAddressData from '../screens/ProfileAddressData';
+import ProfileDocument from '../screens/ProfileDocument';
 
 const config = Platform.select({
   web: { headerMode: 'screen' },
@@ -17,7 +20,10 @@ const config = Platform.select({
 const ProfileStack = createStackNavigator(
   {
     Profile: ProfileScreen,
-    ProfileData: ProfileDataScreen
+    ProfileData: ProfileDataScreen,
+    ProfilePass: ProfileChangePass,
+    ProfileAddressData: ProfileAddressData,
+    ProfileDocument: ProfileDocument
   },
   config
 );

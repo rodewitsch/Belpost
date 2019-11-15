@@ -23,21 +23,21 @@ const DATA = [
     title: 'Изменить пароль',
     icon: 'ios-unlock',
     color: '#d1d412',
-    action: (navigation) => console.log('Изменить пароль', navigation)
+    action: (navigation) => navigation.navigate('ProfilePass')
   },
   {
     id: '58694a0f-3da1-471f-bd96-145571e29d72',
     title: 'Адресные данные',
     icon: 'ios-pin',
     color: '#12d42a',
-    action: () => console.log('Адресные данные')
+    action: (navigation) => navigation.navigate('ProfileAddressData')
   },
   {
     id: '58694a0f-3da1-471f-bd96-145571e29d75',
     title: 'Данные документа, удостоверяющего личность',
     icon: 'ios-paper',
     color: '#d41251',
-    action: () => console.log('Данные документа, удостоверяющего личность')
+    action: (navigation) => navigation.navigate('ProfileDocument')
   },
 ];
 
