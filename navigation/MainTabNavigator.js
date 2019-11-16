@@ -4,13 +4,18 @@ import { createAppContainer, createSwitchNavigator, createStackNavigator, create
 
 import TabBarIcon from '../components/TabBarIcon';
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
-import ServicesScreen from '../screens/ServicesScreen';
-import ProfileScreen from '../screens/ProfileScreen';
+import ServicesScreen from '../screens/services/ServicesScreen';
 import SettingsScreen from '../screens/SettingsScreen';
-import ProfileDataScreen from '../screens/ProfileDataScreen';
-import ProfileChangePass from '../screens/ProfileChangePass';
-import ProfileAddressData from '../screens/ProfileAddressData';
-import ProfileDocument from '../screens/ProfileDocument';
+import ProfileScreen from '../screens/profile/ProfileScreen';
+import PersonalInfoScreen from '../screens/profile/PersonalInfoScreen';
+import ChangePassScreen from '../screens/profile/ChangePassScreen';
+import AddAddressScreen from '../screens/profile/AddAddressScreen';
+import PersonalDocumentScreen from '../screens/profile/PersonalDocumentScreen';
+import AddressesScreen from '../screens/profile/AddressesScreen';
+import TrackingScreen from '../screens/services/TrackingScreen';
+import RedirectingScreen from '../screens/services/RedirectingScreen';
+import EmailNoticeScreen from '../screens/services/EmailNoticeScreen';
+import ArchiveScreen from '../screens/services/ArchiveScreen';
 
 const config = Platform.select({
   web: { headerMode: 'screen' },
@@ -20,10 +25,11 @@ const config = Platform.select({
 const ProfileStack = createStackNavigator(
   {
     Profile: ProfileScreen,
-    ProfileData: ProfileDataScreen,
-    ProfilePass: ProfileChangePass,
-    ProfileAddressData: ProfileAddressData,
-    ProfileDocument: ProfileDocument
+    PersonalInfo: PersonalInfoScreen,
+    ChangePass: ChangePassScreen,
+    Addresses: AddressesScreen,
+    AddAddress: AddAddressScreen,
+    PersonalDocument: PersonalDocumentScreen
   },
   config
 );
@@ -39,7 +45,11 @@ ProfileStack.path = '';
 
 const ServicesStack = createStackNavigator(
   {
-    Links: ServicesScreen,
+    Services: ServicesScreen,
+    Tracking: TrackingScreen,
+    Redirect: RedirectingScreen,
+    EmailNotice: EmailNoticeScreen,
+    Archive: ArchiveScreen
   },
   config
 );
@@ -69,7 +79,7 @@ SettingsStack.navigationOptions = {
 
 SettingsStack.path = '';
 
-const AppStack = createBottomTabNavigator({ ProfileStack, ServicesStack, SettingsStack });
+const AppStack = createBottomTabNavigator({ ServicesStack, ProfileStack, SettingsStack });
 
 AppStack.path = '';
 

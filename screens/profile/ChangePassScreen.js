@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 
 
-export function ProfileDocument(props) {
+export function ChangePassScreen(props) {
 
   const [email, onChangeEmail] = useState('');
 
@@ -22,7 +22,7 @@ export function ProfileDocument(props) {
       <SafeAreaView >
         <ScrollView >
           <View style={styles.input}>
-            <Text>Серия и номер документа, удостоверяющего личность</Text>
+            <Text>Старый пароль</Text>
             <TextInput
               style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
             // onChangeText={text => onChangePassword(text)}
@@ -30,7 +30,15 @@ export function ProfileDocument(props) {
             />
           </View>
           <View style={styles.input}>
-            <Text>Пароль</Text>
+            <Text>Новый пароль</Text>
+            <TextInput
+              style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+            // onChangeText={text => onChangePassword(text)}
+            // value={password}
+            />
+          </View>
+          <View style={styles.input}>
+            <Text>Повторите новый пароль</Text>
             <TextInput
               style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
             // onChangeText={text => onChangePassword(text)}
@@ -47,8 +55,8 @@ export function ProfileDocument(props) {
   );
 }
 
-ProfileDocument.navigationOptions = {
-  title: 'Данные документа'
+ChangePassScreen.navigationOptions = {
+  title: 'Смена пароля'
 };
 
 
@@ -72,5 +80,5 @@ const mapDispatchToProps = dispatch => ({
 
 export default connect(
   mapStateToProps
-)(ProfileDocument)
+)(ChangePassScreen)
 

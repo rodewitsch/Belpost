@@ -11,10 +11,9 @@ import {
 } from 'react-native';
 
 
-export function ProfileChangePass(props) {
+export function EmailNoticeScreen(props) {
 
   const [email, onChangeEmail] = useState('');
-
 
   return (
     <View style={styles.container}>
@@ -22,7 +21,7 @@ export function ProfileChangePass(props) {
       <SafeAreaView >
         <ScrollView >
           <View style={styles.input}>
-            <Text>Старый пароль</Text>
+            <Text>Название отправления</Text>
             <TextInput
               style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
             // onChangeText={text => onChangePassword(text)}
@@ -30,15 +29,7 @@ export function ProfileChangePass(props) {
             />
           </View>
           <View style={styles.input}>
-            <Text>Новый пароль</Text>
-            <TextInput
-              style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-            // onChangeText={text => onChangePassword(text)}
-            // value={password}
-            />
-          </View>
-          <View style={styles.input}>
-            <Text>Повторите новый пароль</Text>
+            <Text>Введите номер отправления</Text>
             <TextInput
               style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
             // onChangeText={text => onChangePassword(text)}
@@ -55,8 +46,8 @@ export function ProfileChangePass(props) {
   );
 }
 
-ProfileChangePass.navigationOptions = {
-  title: 'Смена пароля'
+EmailNoticeScreen.navigationOptions = {
+  title: 'Email уведомления'
 };
 
 
@@ -80,5 +71,5 @@ const mapDispatchToProps = dispatch => ({
 
 export default connect(
   mapStateToProps
-)(ProfileChangePass)
+)(EmailNoticeScreen)
 

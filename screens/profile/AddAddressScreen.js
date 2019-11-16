@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 
 
-export function ProfileDataScreen(props) {
+export function AddAddressScreen(props) {
 
   const [email, onChangeEmail] = useState('');
 
@@ -22,7 +22,7 @@ export function ProfileDataScreen(props) {
       <SafeAreaView >
         <ScrollView >
           <View style={styles.input}>
-            <Text>Фамилия</Text>
+            <Text>Область</Text>
             <TextInput
               style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
             // onChangeText={text => onChangePassword(text)}
@@ -30,7 +30,7 @@ export function ProfileDataScreen(props) {
             />
           </View>
           <View style={styles.input}>
-            <Text>Имя</Text>
+            <Text>Район</Text>
             <TextInput
               style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
             // onChangeText={text => onChangePassword(text)}
@@ -38,7 +38,7 @@ export function ProfileDataScreen(props) {
             />
           </View>
           <View style={styles.input}>
-            <Text>Отчество*</Text>
+            <Text>Город</Text>
             <TextInput
               style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
             // onChangeText={text => onChangePassword(text)}
@@ -46,7 +46,7 @@ export function ProfileDataScreen(props) {
             />
           </View>
           <View style={styles.input}>
-            <Text>Email</Text>
+            <Text>Улица</Text>
             <TextInput
               style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
             // onChangeText={text => onChangePassword(text)}
@@ -54,7 +54,7 @@ export function ProfileDataScreen(props) {
             />
           </View>
           <View style={styles.input}>
-            <Text>Телефон</Text>
+            <Text>Дом</Text>
             <TextInput
               style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
             // onChangeText={text => onChangePassword(text)}
@@ -62,7 +62,7 @@ export function ProfileDataScreen(props) {
             />
           </View>
           <View style={styles.input}>
-            <Text>Мобильный оператор</Text>
+            <Text>Корпус</Text>
             <TextInput
               style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
             // onChangeText={text => onChangePassword(text)}
@@ -70,14 +70,21 @@ export function ProfileDataScreen(props) {
             />
           </View>
           <View style={styles.input}>
-            <Text>Пароль</Text>
+            <Text>Квартира</Text>
             <TextInput
               style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
             // onChangeText={text => onChangePassword(text)}
             // value={password}
             />
           </View>
-          <Text>*Заполнение поля отчество является обязательным (если таковое имеется) для оказания услуги по перенаправлению.</Text>
+          <View style={styles.input}>
+            <Text>Почтовый код</Text>
+            <TextInput
+              style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+            // onChangeText={text => onChangePassword(text)}
+            // value={password}
+            />
+          </View>
           <Button
             title="Сохранить"
           // onPress={() => signIn()}
@@ -88,8 +95,8 @@ export function ProfileDataScreen(props) {
   );
 }
 
-ProfileDataScreen.navigationOptions = {
-  title: 'Личные данные'
+AddAddressScreen.navigationOptions = {
+  title: 'Добавление адреса'
 };
 
 
@@ -113,5 +120,5 @@ const mapDispatchToProps = dispatch => ({
 
 export default connect(
   mapStateToProps
-)(ProfileDataScreen)
+)(AddAddressScreen)
 

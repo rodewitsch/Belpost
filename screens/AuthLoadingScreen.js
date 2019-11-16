@@ -22,7 +22,7 @@ function AuthLoadingScreen(props) {
 
     useEffect(() => {
         if (!props.cookies) props.getCookies();
-        if (props.authorization.status) props.navigation.navigate('Profile');
+        if (props.authorization.status) props.navigation.navigate('Services');
         if (props.authorization.error) alert(props.authorization.error);
     })
 

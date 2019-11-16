@@ -9,7 +9,7 @@ import {
 
 
 
-export default function ProfileItem({ title, icon, color, action, navigation }) {
+export default function ListItem({ title, icon, color, action, navigation }) {
     return (
         <TouchableNativeFeedback
             onPress={() => action(navigation)}>
