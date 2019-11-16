@@ -8,18 +8,13 @@ import {
   SafeAreaView,
   ScrollView
 } from 'react-native';
-
-var radio_props = [
-  { label: 'param1', value: 0, selected: true },
-  { label: 'param2', value: 1 }
-];
+import { Ionicons } from '@expo/vector-icons';
+import { selectAddress, deleteAddress } from '../../store/actions/profile';
 
 
-
-export function ProfileAddressData(props) {
+export function AddressesScreen(props) {
 
   const [email, onChangeEmail] = useState('');
-
 
   return (
     <View style={styles.container}>
@@ -30,18 +25,22 @@ export function ProfileAddressData(props) {
             style={styles.input}
           >
             {
-              radio_props.map((obj, i) => (
-                <RadioButton labelHorizontal={true} key={i} >
+              props.addresses.array.map((obj, i) => {
+                const deleteIcon = <Ionicons
+                  name="ios-trash"
+                  size={26}
+                />
+                return <RadioButton style={{ marginBottom: 20 }} labelHorizontal={true} key={i} >
                   <RadioButtonInput
                     obj={obj}
                     index={i}
-                    isSelected={obj.selected}
-                    onPress={() => console.log('radiobuttoninput')}
+                    isSelected={props.addresses.selected == obj.value}
+                    onPress={obj => props.selectAddress(obj)}
                     borderWidth={1}
                     buttonInnerColor={'#e74c3c'}
-                    buttonOuterColor={obj.selected ? '#2196f3' : '#000'}
-                    buttonSize={40}
-                    buttonOuterSize={80}
+                    buttonOuterColor={props.addresses.selected == obj.value ? '#2196f3' : '#000'}
+                    buttonSize={20}
+                    buttonOuterSize={40}
                     buttonStyle={{}}
                     buttonWrapStyle={{ marginLeft: 10 }}
                   />
@@ -49,25 +48,25 @@ export function ProfileAddressData(props) {
                     obj={obj}
                     index={i}
                     labelHorizontal={true}
-                    onPress={() => console.log('RadioButtonLabel')}
-                    labelStyle={{ fontSize: 20, color: '#2ecc71' }}
+                    onPress={obj => props.selectAddress(obj)}
+                    labelStyle={{ width: 240, marginTop: -10 }}
                     labelWrapStyle={{}}
                   />
                   <RadioButtonLabel
-                    obj={obj}
+                    obj={{ ...obj, label: deleteIcon }}
                     index={i}
                     labelHorizontal={true}
-                    onPress={() => console.log('delete')}
-                    labelStyle={{ fontSize: 20, color: '#2ecc71' }}
+                    onPress={() => props.deleteAddress(obj.value)}
+                    labelStyle={{ fontSize: 20, height: 40, width: 40, color: '#ff0000', paddingTop: 5 }}
                     labelWrapStyle={{}}
                   />
                 </RadioButton>
-              ))
+              })
             }
           </RadioForm>
           <Button
             title="Добавить"
-          // onPress={() => signIn()}
+            onPress={() => props.navigation.navigate('AddAddress')}
           />
         </ScrollView>
       </SafeAreaView>
@@ -75,7 +74,7 @@ export function ProfileAddressData(props) {
   );
 }
 
-ProfileAddressData.navigationOptions = {
+AddressesScreen.navigationOptions = {
   title: 'Адресные данные'
 };
 
@@ -93,13 +92,16 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
-  profile: state.profile.profile,
+  addresses: state.profile.addresses
 });
 
 const mapDispatchToProps = dispatch => ({
+  selectAddress: (item) => dispatch(selectAddress(item)),
+  deleteAddress: (item) => dispatch(deleteAddress(item))
 })
 
 export default connect(
-  mapStateToProps
-)(ProfileAddressData)
+  mapStateToProps,
+  mapDispatchToProps
+)(AddressesScreen)
 

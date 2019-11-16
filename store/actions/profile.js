@@ -22,6 +22,16 @@ export const SIGNING_ERROR = (text) => ({
     text
 });
 
+export const SELECTING_ADDRESS = (selected) => ({
+    type: 'SELECTING_ADDRESS',
+    selected
+});
+
+export const DELETING_ADDRESS = (deleted) => ({
+    type: 'DELETING_ADDRESS',
+    deleted
+});
+
 export const SIGNED_IN = (user) => ({
     type: 'SIGNED_IN',
     user
@@ -85,5 +95,17 @@ export function signIn(email, password) {
                 dispatch(SIGNING_ERROR('Ошибка авторизации'));
                 dispatch(SIGN_OUT());
             })
+    }
+}
+
+export function selectAddress(selectedItem) {
+    return function (dispatch) {
+        dispatch(SELECTING_ADDRESS(selectedItem));
+    }
+}
+
+export function deleteAddress(deletedItem) {
+    return function (dispatch) {
+        dispatch(DELETING_ADDRESS(deletedItem));
     }
 }

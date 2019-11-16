@@ -11,10 +11,18 @@ const initialState = {
     profile: {
         isFetching: false,
         name: null
+    },
+    addresses: {
+        isFetching: false,
+        selected: 0,
+        array: [
+            { label: 'test test test test test test', value: 0 },
+            { label: 'test test test test test test test test test test test test', value: 1 }
+        ]
     }
 }
 
-const profile = (state = initialState, action) => {
+export default (state = initialState, action) => {
     switch (action.type) {
         case 'REQUEST_COOKIES': return {
             ...state,
@@ -38,12 +46,23 @@ const profile = (state = initialState, action) => {
             authorization: { isFetching: false, status: false, error: 'Ошибка авторизации' },
             profile: { isFetching: false, name: null }
         }
+        case 'SELECTING_ADDRESS': return {
+            ...state,
+            addresses: { ...state.addresses, selected: action.selected }
+        }
+        case 'DELETING_ADDRESS': return {
+            ...state,
+            addresses: {
+                ...state.addresses,
+                array: state.addresses.array.reduce((acc, item) => {
+                    if (item.value != action.deleted) acc.push(item);
+                    return acc;
+                }, [])
+            }
+        }
         case 'SIGN_OUT':
             return initialState
         default:
             return state;
     }
 }
-
-
-export default profile

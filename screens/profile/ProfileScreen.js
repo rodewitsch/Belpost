@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import { FlatList } from 'react-native-gesture-handler';
-import ProfileItem from '../components/ProfileItems';
+import ListItem from '../../components/ListItems';
 
 const DATA = [
   {
@@ -16,32 +16,32 @@ const DATA = [
     title: 'Личные данные',
     icon: 'md-person',
     color: '#1272d4',
-    action: (navigation) => navigation.navigate('ProfileData')
+    action: (navigation) => navigation.navigate('PersonalInfo')
   },
   {
     id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
     title: 'Изменить пароль',
     icon: 'ios-unlock',
     color: '#d1d412',
-    action: (navigation) => navigation.navigate('ProfilePass')
+    action: (navigation) => navigation.navigate('ChangePass')
   },
   {
     id: '58694a0f-3da1-471f-bd96-145571e29d72',
     title: 'Адресные данные',
     icon: 'ios-pin',
     color: '#12d42a',
-    action: (navigation) => navigation.navigate('ProfileAddressData')
+    action: (navigation) => navigation.navigate('Addresses')
   },
   {
     id: '58694a0f-3da1-471f-bd96-145571e29d75',
     title: 'Данные документа, удостоверяющего личность',
     icon: 'ios-paper',
     color: '#d41251',
-    action: (navigation) => navigation.navigate('ProfileDocument')
+    action: (navigation) => navigation.navigate('PersonalDocument')
   },
 ];
 
-export function HomeScreen(props) {
+export function ProfileScreen(props) {
   return (
     <View style={styles.container}>
       <Text style={{ padding: 20, textAlign: "center", fontSize: 20 }}>
@@ -55,7 +55,7 @@ export function HomeScreen(props) {
           <SafeAreaView style={styles.container}>
             <FlatList
               data={DATA}
-              renderItem={({ item }) => <ProfileItem {...{ ...item, navigation: props.navigation }} />}
+              renderItem={({ item }) => <ListItem {...{ ...item, navigation: props.navigation }} />}
               keyExtractor={item => item.id}
             />
           </SafeAreaView>
@@ -66,7 +66,7 @@ export function HomeScreen(props) {
   );
 }
 
-HomeScreen.navigationOptions = {
+ProfileScreen.navigationOptions = {
   title: 'Профиль'
 };
 
@@ -111,5 +111,5 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(HomeScreen)
+)(ProfileScreen)
 
