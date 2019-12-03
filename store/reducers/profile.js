@@ -24,14 +24,6 @@ const initialState = {
 
 export default (state = initialState, action) => {
     switch (action.type) {
-        case 'REQUEST_COOKIES': return {
-            ...state,
-            cookies: { isFetching: true, value: null }
-        }
-        case 'RECEIVE_COOKIES': return {
-            ...state,
-            cookies: { isFetching: true, value: action.cookies }
-        }
         case 'SIGNING_IN': return {
             ...state,
             authorization: { isFetching: true, status: false, error: '' }

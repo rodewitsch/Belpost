@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import {
     Button,
@@ -6,66 +6,72 @@ import {
     StyleSheet,
     TextInput,
     View,
-    Image
+    Image,
+    KeyboardAvoidingView
 } from 'react-native'
-import { getCookiesAsync, signIn } from '../store/actions/profile';
+import { getCookiesAsync } from '../store/actions/transport';
+import { signIn } from '../store/actions/profile';
 
-function AuthLoadingScreen(props) {
+class AuthLoadingScreen extends React.Component {
 
-    const [email, onChangeEmail] = useState('');
-    const [password, onChangePassword] = useState('');
-
-
-    const signIn = () => {
-        props.signIn(email, password);
+    constructor(props) {
+        super(props);
+        this.state = {
+            email: '',
+            password: ''
+        };
     }
 
-    useEffect(() => {
-        if (!props.cookies) props.getCookies();
-        if (props.authorization.status) props.navigation.navigate('Services');
-        if (props.authorization.error) alert(props.authorization.error);
-    })
+    componentDidMount() {
+        this.props.getCookies();
+    }
 
-    return (
-        <View style={styles.container}>
+    componentDidUpdate() {
+        if (this.props.authorization.status) this.props.navigation.navigate('Services');
+        if (this.props.authorization.error) alert(this.props.authorization.error);
+    }
 
-            <View style={{ display: 'flex', alignItems: 'center' }}>
-                <Image
-                    style={{ height: 100, marginBottom: 50 }}
-                    resizeMode="contain"
-                    source={require('../assets/images/belpost_logo.jpg')} />
+    render() {
+        return (
+            <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
+                <View style={{ display: 'flex', alignItems: 'center' }}>
+                    <Image
+                        style={{ height: 100, marginBottom: 50 }}
+                        resizeMode="contain"
+                        source={require('../assets/images/belpost_logo.jpg')} />
 
-            </View>
+                </View>
 
-            <Text style={{ textAlign: "center", marginBottom: 30, fontSize: 30 }}>Авторизация</Text>
+                <Text style={{ textAlign: "center", marginBottom: 30, fontSize: 30 }}>Авторизация</Text>
 
-            <View style={styles.input}>
-                <Text>Email</Text>
-                <TextInput
-                    autoCompleteType="email"
-                    style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-                    onChangeText={text => onChangeEmail(text)}
-                    value={email}
+                <View style={styles.input}>
+                    <Text>Email</Text>
+                    <TextInput
+                        autoCompleteType="email"
+                        style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+                        onChangeText={email => this.setState({ email })}
+                        value={this.state.email}
+                    />
+                </View>
+
+                <View style={styles.input}>
+                    <Text>Пароль</Text>
+                    <TextInput
+                        autoCompleteType="password"
+                        secureTextEntry={true}
+                        style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+                        onChangeText={password => this.setState({ password })}
+                        value={this.state.password}
+                    />
+                </View>
+
+                <Button
+                    title="Войти"
+                    onPress={() => this.props.signIn(this.state.email, this.state.password)}
                 />
-            </View>
-
-            <View style={styles.input}>
-                <Text>Пароль</Text>
-                <TextInput
-                    autoCompleteType="password"
-                    secureTextEntry={true}
-                    style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-                    onChangeText={text => onChangePassword(text)}
-                    value={password}
-                />
-            </View>
-
-            <Button
-                title="Войти"
-                onPress={() => signIn()}
-            />
-        </View >
-    )
+            </KeyboardAvoidingView>
+        )
+    }
 }
 
 const styles = StyleSheet.create({

@@ -1,49 +1,55 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import {
   StyleSheet,
-  Text,
   View,
-  TextInput,
   Button,
   SafeAreaView,
   ScrollView
 } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
+import TrackItems from '../../components/TrackItems';
+import { getTracks } from '../../store/actions/services';
 
 
-export function TrackingScreen(props) {
+function buildTracksArray(tracks) {
+  return tracks.map((track, index) => ({
+    id: `${index}`,
+    ...track
+  }))
+}
 
-  const [email, onChangeEmail] = useState('');
+class TrackingScreen extends React.Component {
 
-  return (
-    <View style={styles.container}>
+  componentDidMount() {
+    this.props.getTracks();
+  }
 
-      <SafeAreaView >
-        <ScrollView >
-          <View style={styles.input}>
-            <Text>Название отправления</Text>
-            <TextInput
-              style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-            // onChangeText={text => onChangePassword(text)}
-            // value={password}
+  render() {
+    return (
+      <View style={styles.container}>
+
+        <SafeAreaView >
+          <ScrollView >
+            <FlatList
+              data={buildTracksArray(this.props.tracks.array)}
+              renderItem={({ item }) => <TrackItems {...{
+                ...item,
+                action: (navigation) => navigation.navigate('TrackingHistory', { item }),
+                navigation: this.props.navigation
+              }} />}
+              keyExtractor={item => item.id}
             />
-          </View>
-          <View style={styles.input}>
-            <Text>Введите номер отправления</Text>
-            <TextInput
-              style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-            // onChangeText={text => onChangePassword(text)}
-            // value={password}
+
+            <Button
+              title="Добавить трек"
+              onPress={() => this.props.navigation.navigate('AddTrack')}
             />
-          </View>
-          <Button
-            title="Сохранить"
-          // onPress={() => signIn()}
-          />
-        </ScrollView>
-      </SafeAreaView>
-    </View>
-  );
+          </ScrollView>
+        </SafeAreaView>
+      </View>
+    )
+  }
 }
 
 TrackingScreen.navigationOptions = {
@@ -54,7 +60,7 @@ TrackingScreen.navigationOptions = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#ffffff'
   },
   input: {
     marginBottom: 20,
@@ -63,13 +69,15 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
-  profile: state.profile.profile,
+  tracks: state.services.tracks
 });
 
 const mapDispatchToProps = dispatch => ({
+  getTracks: () => dispatch(getTracks())
 })
 
 export default connect(
-  mapStateToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(TrackingScreen)
 

@@ -16,6 +16,8 @@ import TrackingScreen from '../screens/services/TrackingScreen';
 import RedirectingScreen from '../screens/services/RedirectingScreen';
 import EmailNoticeScreen from '../screens/services/EmailNoticeScreen';
 import ArchiveScreen from '../screens/services/ArchiveScreen';
+import AddTrackScreen from '../screens/services/AddTrackScreen';
+import TrackingHistoryScreen from '../screens/services/TrackingHistoryScreen';
 
 const config = Platform.select({
   web: { headerMode: 'screen' },
@@ -47,6 +49,8 @@ const ServicesStack = createStackNavigator(
   {
     Services: ServicesScreen,
     Tracking: TrackingScreen,
+    AddTrack: AddTrackScreen,
+    TrackingHistory: TrackingHistoryScreen,
     Redirect: RedirectingScreen,
     EmailNotice: EmailNoticeScreen,
     Archive: ArchiveScreen
