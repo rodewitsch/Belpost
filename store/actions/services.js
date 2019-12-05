@@ -2,6 +2,7 @@ import { fetch } from 'cross-fetch';
 import { build } from 'search-params'
 import HTMLParser from 'fast-html-parser';
 import { getHiddenFields } from './transport';
+import moment from 'moment';
 
 export const REQUEST_TRACKS = () => ({
     type: 'REQUEST_TRACKS',
@@ -96,20 +97,17 @@ export function getTrackHistory(trackIndex) {
                 getHiddenFields(dispatch, data);
                 let history = [];
                 const rows = html.querySelectorAll(`#Panel2 tr`);
-                const item = {
-                    date: rows[1].childNodes[1].text.trim(),
-                    event: rows[1].childNodes[2].text.trim(),
-                    office: rows[1].childNodes[3].text.trim()
-                }
-                // console.log(item);
-                history = rows.map((row, index) => {
-                    return {
-                        id: `${index}`,
-                        date: row.childNodes[1].text.trim(),
-                        event: row.childNodes[2].text.trim(),
-                        office: row.childNodes[3].text.trim()
-                    };
-                });
+                history = rows
+                    .filter(row => row.childNodes[1].text.trim() != 'Дата')
+                    .map((row, index) => {
+                        return {
+                            id: `${index}`,
+                            date: moment(row.childNodes[1].text.trim(), 'DD.MM.YYYY'),
+                            event: row.childNodes[2].text.trim(),
+                            office: row.childNodes[3].text.trim()
+                        };
+                    })
+                    .sort((a, b) => a.date.isBefore(b.date) ? -1 : 1)
                 // console.log(history);
                 dispatch(RECEIVE_TRACK_HISTORY(trackIndex, history));
             })

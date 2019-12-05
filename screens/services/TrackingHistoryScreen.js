@@ -13,7 +13,6 @@ import { getTrackHistory } from '../../store/actions/services';
 
 class TrackingHistoryScreen extends React.Component {
 
-
   constructor(props) {
     super(props);
     props.getTrackHistory(props.navigation.getParam('item').id);
@@ -33,7 +32,18 @@ class TrackingHistoryScreen extends React.Component {
           <ScrollView >
             <FlatList
               data={this.getHistory(this.props.navigation.getParam('item').id)}
-              renderItem={({ item }) => <View><Text>{item.date}</Text><Text>{item.event}</Text><Text>{item.office}</Text></View>}
+              renderItem={({ item }) => (
+                <View style={styles.track}>
+                  <View style={styles.date}>
+                    <Text style={styles.day}>{item.date.format('DD')}</Text>
+                    <Text>{item.date.format('MM.YYYY')}</Text>
+                  </View>
+                  <View style={styles.trackInfo}>
+                    <Text style={styles.event}>{item.event}</Text>
+                    <Text style={styles.office}>{item.office}</Text>
+                  </View>
+                </View>
+              )}
               keyExtractor={item => item.id}
             />
           </ScrollView>
@@ -55,9 +65,32 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffffff'
   },
-  input: {
-    marginBottom: 20,
-    marginHorizontal: 10
+  track: {
+    flexDirection: "row",
+    height: 80
+  },
+  trackInfo: {
+    marginLeft: 10,
+    flexDirection: "column",
+    justifyContent: 'center',
+    width: 290
+  },
+  date: {
+    width: 60,
+    flexDirection: "column",
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ccc'
+  },
+  day: {
+    fontSize: 20
+  },
+  event: {
+    fontWeight: "500"
+  },
+  office: {
+
   }
 });
 
