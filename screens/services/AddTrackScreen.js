@@ -1,53 +1,73 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
+import Icon from 'react-native-vector-icons/Ionicons';
+import ActionButton from 'react-native-action-button';
 import {
   StyleSheet,
   Text,
   View,
   TextInput,
-  Button,
   SafeAreaView,
   ScrollView
 } from 'react-native';
+import { addTrack } from '../../store/actions/services';
 
 
-export function AddTrackScreen(props) {
+class AddTrackScreen extends React.Component {
 
-  const [email, onChangeEmail] = useState('');
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: '',
+      track: ''
+    };
+  }
 
-  return (
-    <View style={styles.container}>
+  addTrack(name, track) {
+    this.props.addTrack(name, track)
+    .then(() => {
+      console.log('navigate');
+      this.props.navigation.navigate('Tracking')
+    })
+    .catch(err => console.error(err));
+  }
 
-      <SafeAreaView >
-        <ScrollView >
-          <View style={styles.input}>
-            <Text>Название отправления</Text>
-            <TextInput
-              style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-            // onChangeText={text => onChangePassword(text)}
-            // value={password}
-            />
-          </View>
-          <View style={styles.input}>
-            <Text>Введите номер отправления</Text>
-            <TextInput
-              style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-            // onChangeText={text => onChangePassword(text)}
-            // value={password}
-            />
-          </View>
-          <Button
-            title="Сохранить"
-          // onPress={() => signIn()}
-          />
-        </ScrollView>
-      </SafeAreaView>
-    </View>
-  );
+  render() {
+    return (
+      <View style={styles.container} >
+
+        <SafeAreaView >
+          <ScrollView >
+            <View style={styles.input}>
+              <Text>Название отправления</Text>
+              <TextInput
+                style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+                onChangeText={name => this.setState({ name })}
+                value={this.state.name}
+              />
+            </View>
+            <View style={styles.input}>
+              <Text>Трек-номер отправления</Text>
+              <TextInput
+                style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+                onChangeText={track => this.setState({ track })}
+                value={this.state.track}
+              />
+            </View>
+          </ScrollView>
+        </SafeAreaView>
+        <ActionButton
+          buttonColor="rgba(47,220,92,1)"
+          onPress={() => this.addTrack(this.state.name, this.state.track)}
+          renderIcon={() => (<Icon name="md-checkmark" style={{ fontSize: 25, color: 'white' }} />)}>
+        </ActionButton>
+      </View>
+    )
+  };
 }
 
 AddTrackScreen.navigationOptions = {
-  title: 'Отслеживание отправлений'
+  title: 'Добавление отправления'
 };
 
 
@@ -63,13 +83,15 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
-  profile: state.profile.profile,
+  tracks: state.services.tracks
 });
 
 const mapDispatchToProps = dispatch => ({
+  addTrack: (name, track) => dispatch(addTrack(name, track))
 })
 
 export default connect(
-  mapStateToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(AddTrackScreen)
 

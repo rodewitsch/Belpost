@@ -23,6 +23,7 @@ export const RECEIVE_TRACK_HISTORY = (index, history) => ({
     history
 })
 
+
 export function getTracks() {
 
     return function (dispatch, getState) {
@@ -52,16 +53,8 @@ export function getTracks() {
                 error => console.log('error', error)
             )
             .then(function (data) {
-                const html = data ? HTMLParser.parse(data) : null;
                 getHiddenFields(dispatch, data);
-                let tracks = [];
-                for (let i = 0; ; i++) {
-                    const track = html.querySelector(`#LBtn${i}`);
-                    if (!track) break;
-                    const openBrakeIndex = track.rawText.indexOf('('),
-                        closeBrakeIndex = track.rawText.indexOf(')');
-                    tracks.push({ track: track.rawText.substring(0, openBrakeIndex), title: track.rawText.substring(openBrakeIndex + 1, closeBrakeIndex) });
-                }
+                const tracks = parseTracks(data);
                 dispatch(RECEIVE_TRACKS(tracks));
             })
             .catch(function (err) {
@@ -117,4 +110,66 @@ export function getTrackHistory(trackIndex) {
                 dispatch(RECEIVE_TRACK_HISTORY(trackIndex, history));
             })
     }
+}
+
+export function addTrack(name, track) {
+
+    return function (dispatch, getState) {
+        console.log('addTrack', {
+            'ToolkitScriptManager1': 'UpdatePanel5|BtnSearch',
+            'TxtNumPos': track,
+            'TxtKom': name,
+            'BtnSearch': 'Сохранить',
+            '__VIEWSTATE': getState().transport.hiddenFields.__VIEWSTATE,
+            '__VIEWSTATEGENERATOR': getState().transport.hiddenFields.__VIEWSTATEGENERATOR,
+            '__EVENTVALIDATION': getState().transport.hiddenFields.__EVENTVALIDATION
+        });
+        dispatch(REQUEST_TRACKS());
+        const params = build({
+            'ToolkitScriptManager1': 'UpdatePanel5|BtnSearch',
+            'TxtNumPos': track,
+            'TxtKom': name,
+            'BtnSearch': 'Сохранить',
+            '__VIEWSTATE': getState().transport.hiddenFields.__VIEWSTATE,
+            '__VIEWSTATEGENERATOR': getState().transport.hiddenFields.__VIEWSTATEGENERATOR,
+            '__EVENTVALIDATION': getState().transport.hiddenFields.__EVENTVALIDATION
+        });
+
+        return fetch(
+            'https://webservices.belpost.by/PersonalCabinet/PersonalCabinet.aspx',
+            {
+                method: 'POST',
+                body: params,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'User-Agent': ' Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
+                    'Cookie': getState().transport.cookies.value
+                }
+            })
+            .then(
+                response => response.text(),
+                error => console.log('error', error)
+            )
+            .then(function (data) {
+                getHiddenFields(dispatch, data);
+                const tracks = parseTracks(data);
+                dispatch(RECEIVE_TRACKS(tracks));
+            })
+            .catch(function (err) {
+                console.error(err);
+            })
+    }
+}
+
+function parseTracks(data) {
+    const html = data ? HTMLParser.parse(data) : null;
+    let tracks = [];
+    for (let i = 0; ; i++) {
+        const track = html.querySelector(`#LBtn${i}`);
+        if (!track) break;
+        const openBrakeIndex = track.rawText.indexOf('('),
+            closeBrakeIndex = track.rawText.indexOf(')');
+        tracks.push({ track: track.rawText.substring(0, openBrakeIndex), title: track.rawText.substring(openBrakeIndex + 1, closeBrakeIndex) });
+    }
+    return tracks;
 }

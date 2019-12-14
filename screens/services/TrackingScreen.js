@@ -3,11 +3,11 @@ import { connect } from 'react-redux';
 import {
   StyleSheet,
   View,
-  Button,
   SafeAreaView,
   ScrollView
 } from 'react-native';
 import ActionButton from 'react-native-action-button';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { FlatList } from 'react-native-gesture-handler';
 import TrackItems from '../../components/TrackItems';
 import { getTracks } from '../../store/actions/services';
@@ -46,9 +46,10 @@ class TrackingScreen extends React.Component {
         </SafeAreaView>
 
         <ActionButton
-              buttonColor="rgba(47,149,220,1)"
-              onPress={() => this.props.navigation.navigate('AddTrack')}
-            />
+          buttonColor="rgba(47,149,220,1)"
+          onPress={() => this.props.navigation.navigate('AddTrack')}
+          renderIcon={() => (<Icon name="md-add" style={{ fontSize: 25, color: 'white' }} />)}>
+        </ActionButton>
       </View>
     )
   }
