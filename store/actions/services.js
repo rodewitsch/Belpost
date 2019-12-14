@@ -24,9 +24,10 @@ export const RECEIVE_TRACK_HISTORY = (index, history) => ({
 })
 
 export function getTracks() {
-    return function (dispatch, getState) {
-        dispatch(REQUEST_TRACKS());
 
+    return function (dispatch, getState) {
+        console.log('getTracks', getState());
+        dispatch(REQUEST_TRACKS());
         const params = build({
             'ToolkitScriptManager1': 'UpdatePanel2|LinkBtnSearch',
             '__EVENTTARGET': 'LinkBtnSearch',
@@ -63,10 +64,14 @@ export function getTracks() {
                 }
                 dispatch(RECEIVE_TRACKS(tracks));
             })
+            .catch(function (err) {
+                console.error(err);
+            })
     }
 }
 
 export function getTrackHistory(trackIndex) {
+    console.log('getTrackHistory');
     return function (dispatch, getState) {
         dispatch(REQUEST_TRACK_HISTORY());
         const params = build({

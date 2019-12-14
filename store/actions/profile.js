@@ -1,6 +1,7 @@
 import { fetch } from 'cross-fetch';
 import { build } from 'search-params'
 import { getHiddenFields } from './transport';
+import * as Keychain from 'react-native-keychain';
 
 export const SIGNING_IN = (email, password) => ({
     type: 'SIGNING_IN',
@@ -33,6 +34,7 @@ export const SIGN_OUT = () => ({
 });
 
 export function signIn(email, password) {
+    console.log('signIn');
     return function (dispatch, getState) {
         dispatch(SIGNING_IN(email, password));
 
@@ -65,9 +67,17 @@ export function signIn(email, password) {
             .then(function (user) {
                 const userName = (user.match(/<span id="LblEnter"><b>Здравствуйте, (.*)<\/b><\/span>/) || [])[1];
                 getHiddenFields(dispatch, user);
-                if (userName) return dispatch(SIGNED_IN(userName));
+                if (userName) {
+                    Keychain.setGenericPassword(email, password);
+                    return dispatch(SIGNED_IN(userName));
+                }
+                Keychain.resetGenericPassword();
                 dispatch(SIGNING_ERROR('Ошибка авторизации'));
                 dispatch(SIGN_OUT());
+            })
+            .catch(function (err) {
+                Keychain.resetGenericPassword();
+                dispatch(SIGNING_ERROR(err));
             })
     }
 }

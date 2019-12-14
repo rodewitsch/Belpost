@@ -1,93 +1,47 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-    Button,
-    Text,
+    ActivityIndicator,
+    StatusBar,
     StyleSheet,
-    TextInput,
     View,
-    Image,
-    KeyboardAvoidingView
-} from 'react-native'
+} from 'react-native';
 import { getCookiesAsync } from '../store/actions/transport';
 import { signIn } from '../store/actions/profile';
+import * as Keychain from 'react-native-keychain';
 
 class AuthLoadingScreen extends React.Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            email: '',
-            password: ''
-        };
-    }
-
     componentDidMount() {
-        this.props.getCookies();
+        if (!this.props.cookies.value && !this.props.cookies.isFetching) this.props.getCookies();
+        if (this.props.authorization.status) this.props.navigation.navigate('App');
     }
 
     componentDidUpdate() {
-        if (this.props.authorization.status) this.props.navigation.navigate('Services');
-        if (this.props.authorization.error) alert(this.props.authorization.error);
+        if (!this.props.cookies.value && !this.props.cookies.isFetching) this.props.getCookies();
+        if (this.props.cookies.value && !this.props.authorization.status && !this.props.authorization.isFetching) {
+            Keychain.getGenericPassword().then(credentials => {
+                if (!credentials) return this.props.navigation.navigate('Auth');
+                this.props.signIn(credentials.username, credentials.password);
+            })
+        }
+        if (this.props.authorization.status) this.props.navigation.navigate('App');
+        if (this.props.authorization.error) this.props.navigation.navigate('Auth');
     }
 
+    // Render any loading content that you like here
     render() {
         return (
-            <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
-                <View style={{ display: 'flex', alignItems: 'center' }}>
-                    <Image
-                        style={{ height: 100, marginBottom: 50 }}
-                        resizeMode="contain"
-                        source={require('../assets/images/belpost_logo.jpg')} />
-
-                </View>
-
-                <Text style={{ textAlign: "center", marginBottom: 30, fontSize: 30 }}>Авторизация</Text>
-
-                <View style={styles.input}>
-                    <Text>Email</Text>
-                    <TextInput
-                        autoCompleteType="email"
-                        style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-                        onChangeText={email => this.setState({ email })}
-                        value={this.state.email}
-                    />
-                </View>
-
-                <View style={styles.input}>
-                    <Text>Пароль</Text>
-                    <TextInput
-                        autoCompleteType="password"
-                        secureTextEntry={true}
-                        style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-                        onChangeText={password => this.setState({ password })}
-                        value={this.state.password}
-                    />
-                </View>
-
-                <Button
-                    title="Войти"
-                    onPress={() => this.props.signIn(this.state.email, this.state.password)}
-                />
-            </KeyboardAvoidingView>
-        )
+            <View>
+                <ActivityIndicator />
+                <StatusBar barStyle="default" />
+            </View>
+        );
     }
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 10,
-        justifyContent: 'center',
-        backgroundColor: '#fff'
-    },
-    input: {
-        marginBottom: 20
-    }
-});
-
 const mapStateToProps = state => ({
-    cookies: state.profile.cookies.value,
+    cookies: state.transport.cookies,
     authorization: state.profile.authorization
 });
 

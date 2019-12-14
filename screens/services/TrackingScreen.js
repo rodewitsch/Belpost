@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   ScrollView
 } from 'react-native';
+import ActionButton from 'react-native-action-button';
 import { FlatList } from 'react-native-gesture-handler';
 import TrackItems from '../../components/TrackItems';
 import { getTracks } from '../../store/actions/services';
@@ -41,12 +42,13 @@ class TrackingScreen extends React.Component {
               keyExtractor={item => item.id}
             />
 
-            <Button
-              title="Добавить трек"
-              onPress={() => this.props.navigation.navigate('AddTrack')}
-            />
           </ScrollView>
         </SafeAreaView>
+
+        <ActionButton
+              buttonColor="rgba(47,149,220,1)"
+              onPress={() => this.props.navigation.navigate('AddTrack')}
+            />
       </View>
     )
   }

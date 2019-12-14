@@ -18,7 +18,7 @@ export default (state = initialState, action) => {
         }
         case 'RECEIVE_COOKIES': return {
             ...state,
-            cookies: { isFetching: true, value: action.cookies }
+            cookies: { isFetching: false, value: action.cookies }
         }
         case 'SET_HIDDEN_FIELDS': return {
             ...state,

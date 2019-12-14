@@ -1,8 +1,4 @@
 const initialState = {
-    cookies: {
-        isFetching: false,
-        value: null
-    },
     authorization: {
         isFetching: false,
         status: false,

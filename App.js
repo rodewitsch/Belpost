@@ -8,28 +8,7 @@ import AppNavigator from './navigation/AppNavigator';
 
 const store = createStore(reducer, applyMiddleware(thunk));
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-});
-
 export default class App extends React.Component {
-
-  componentDidMount() {
-    AppState.addEventListener('change', this.handleAppStateChange);
-  }
-
-  componentWillUnmount() {
-    AppState.removeEventListener('change', this.handleAppStateChange);
-  }
-
-  handleAppStateChange = (nextAppState) => {
-    if (nextAppState === 'inactive') {
-      this.props.navigation.navigate('AuthLoading');
-    }
-  }
 
   render() {
     return (
@@ -43,3 +22,9 @@ export default class App extends React.Component {
   }
 }
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+});
