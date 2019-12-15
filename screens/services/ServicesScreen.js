@@ -14,7 +14,7 @@ const DATA = [
   {
     id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
     title: 'Слежение за отправлениями',
-    icon: 'ios-unlock',
+    icon: 'ios-cube',
     color: '#72a234',
     action: (navigation) => navigation.navigate('Tracking')
   },

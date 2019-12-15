@@ -4,13 +4,14 @@ import {
   StyleSheet,
   View,
   SafeAreaView,
-  ScrollView
+  ScrollView,
+  Text
 } from 'react-native';
 import ActionButton from 'react-native-action-button';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { FlatList } from 'react-native-gesture-handler';
 import TrackItems from '../../components/TrackItems';
-import { getTracks } from '../../store/actions/services';
+import { getTracks, deleteTrack } from '../../store/actions/services';
 
 
 function buildTracksArray(tracks) {
@@ -22,6 +23,13 @@ function buildTracksArray(tracks) {
 
 class TrackingScreen extends React.Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      activeItem: -1
+    };
+  }
+
   componentDidMount() {
     this.props.getTracks();
   }
@@ -29,19 +37,25 @@ class TrackingScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-
         <SafeAreaView >
           <ScrollView >
+            <View style={{ display: (this.props.tracks.array.length ? 'none' : 'flex') }}>
+              <Text style={{fontSize: 20, textAlign: 'center', marginTop: '30%'}}>Добавьте трек код посылки для отслеживания</Text>
+            </View>
             <FlatList
               data={buildTracksArray(this.props.tracks.array)}
               renderItem={({ item }) => <TrackItems {...{
                 ...item,
-                action: (navigation) => navigation.navigate('TrackingHistory', { item }),
-                navigation: this.props.navigation
+                actions: {
+                  deleteTrack: (index) => this.props.deleteTrack(index),
+                  showHistory: (navigation) => navigation.navigate('TrackingHistory', { item }),
+                  displayActions: (index) => this.setState({ activeItem: this.state.activeItem == index ? -1 : index })
+                },
+                activeItem: this.state.activeItem == item.id,
+                navigation: this.props.navigation,
               }} />}
               keyExtractor={item => item.id}
             />
-
           </ScrollView>
         </SafeAreaView>
 
@@ -76,7 +90,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  getTracks: () => dispatch(getTracks())
+  getTracks: () => dispatch(getTracks()),
+  deleteTrack: (index) => dispatch(deleteTrack(index))
 })
 
 export default connect(

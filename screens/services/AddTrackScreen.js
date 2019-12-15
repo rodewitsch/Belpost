@@ -25,11 +25,11 @@ class AddTrackScreen extends React.Component {
 
   addTrack(name, track) {
     this.props.addTrack(name, track)
-    .then(() => {
-      console.log('navigate');
-      this.props.navigation.navigate('Tracking')
-    })
-    .catch(err => console.error(err));
+      .then(() => {
+        console.log('navigate');
+        this.props.navigation.navigate('Tracking')
+      })
+      .catch(err => console.error(err));
   }
 
   render() {

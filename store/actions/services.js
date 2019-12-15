@@ -161,6 +161,53 @@ export function addTrack(name, track) {
     }
 }
 
+export function deleteTrack(index) {
+
+    return function (dispatch, getState) {
+        console.log('deleteTrack', {
+            'ToolkitScriptManager1': `UpdatePanel5|IBtn${index}`,
+            '__VIEWSTATE': getState().transport.hiddenFields.__VIEWSTATE,
+            '__VIEWSTATEGENERATOR': getState().transport.hiddenFields.__VIEWSTATEGENERATOR,
+            '__EVENTVALIDATION': getState().transport.hiddenFields.__EVENTVALIDATION,
+            [`IBtn${index}.x`]: 10,
+            [`IBtn${index}.y`]: 10
+        });
+        dispatch(REQUEST_TRACKS());
+        const params = build({
+            'ToolkitScriptManager1': `UpdatePanel5|IBtn${index}`,
+            '__VIEWSTATE': getState().transport.hiddenFields.__VIEWSTATE,
+            '__VIEWSTATEGENERATOR': getState().transport.hiddenFields.__VIEWSTATEGENERATOR,
+            '__EVENTVALIDATION': getState().transport.hiddenFields.__EVENTVALIDATION,
+            [`IBtn${index}.x`]: 10,
+            [`IBtn${index}.y`]: 10
+        });
+
+        return fetch(
+            'https://webservices.belpost.by/PersonalCabinet/PersonalCabinet.aspx',
+            {
+                method: 'POST',
+                body: params,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'User-Agent': ' Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
+                    'Cookie': getState().transport.cookies.value
+                }
+            })
+            .then(
+                response => response.text(),
+                error => console.log('error', error)
+            )
+            .then(function (data) {
+                getHiddenFields(dispatch, data);
+                const tracks = parseTracks(data);
+                dispatch(RECEIVE_TRACKS(tracks));
+            })
+            .catch(function (err) {
+                console.error(err);
+            })
+    }
+}
+
 function parseTracks(data) {
     const html = data ? HTMLParser.parse(data) : null;
     let tracks = [];
