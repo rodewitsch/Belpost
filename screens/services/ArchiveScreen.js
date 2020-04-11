@@ -4,51 +4,47 @@ import {
   StyleSheet,
   Text,
   View,
-  TextInput,
-  Button,
   SafeAreaView,
   ScrollView
 } from 'react-native';
+import { getArchive } from '../../store/actions/services';
 
 
-export function ArchiveScreen(props) {
+export class ArchiveScreen extends React.Component {
 
-  const [email, onChangeEmail] = useState('');
+  constructor(props) {
+    super(props);
+    this.state = { archive: { array: [] } };
+  }
 
-  return (
-    <View style={styles.container}>
+  componentDidMount() {
+    this.props.getArchive();
+  }
 
-      <SafeAreaView >
-        <ScrollView >
-          <View style={styles.input}>
-            <Text>Название отправления</Text>
-            <TextInput
-              style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-            // onChangeText={text => onChangePassword(text)}
-            // value={password}
-            />
-          </View>
-          <View style={styles.input}>
-            <Text>Введите номер отправления</Text>
-            <TextInput
-              style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-            // onChangeText={text => onChangePassword(text)}
-            // value={password}
-            />
-          </View>
-          <Button
-            title="Сохранить"
-          // onPress={() => signIn()}
-          />
-        </ScrollView>
-      </SafeAreaView>
-    </View>
-  );
+  render() {
+    return (
+      <View style={styles.container} >
+
+        <SafeAreaView >
+          <ScrollView >
+            {
+              this.props.archive.array.map((item, index) => (
+                <View key={index} style={{ flexDirection: 'row' }}>
+                  <Text>{item.event}</Text>
+                  <Text>{item.date.format('DD.MM.YYYY')}</Text>
+                  <Text>{item.trackCode}</Text>
+                  <Text>{item.name}</Text>
+                </View>
+              ))
+            }
+          </ScrollView>
+        </SafeAreaView>
+      </View>
+    );
+  }
 }
 
-ArchiveScreen.navigationOptions = {
-  title: 'Архив'
-};
+ArchiveScreen.navigationOptions = { title: 'Архив отправлений' };
 
 
 const styles = StyleSheet.create({
@@ -62,14 +58,11 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = state => ({
-  profile: state.profile.profile,
-});
+const mapStateToProps = state => ({ archive: state.services.archive });
 
 const mapDispatchToProps = dispatch => ({
+  getArchive: () => dispatch(getArchive()),
 })
 
-export default connect(
-  mapStateToProps
-)(ArchiveScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(ArchiveScreen)
 

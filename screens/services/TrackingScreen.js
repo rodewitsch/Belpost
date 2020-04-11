@@ -5,7 +5,8 @@ import {
   View,
   SafeAreaView,
   ScrollView,
-  Text
+  Text,
+  Alert
 } from 'react-native';
 import ActionButton from 'react-native-action-button';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -14,12 +15,7 @@ import TrackItems from '../../components/TrackItems';
 import { getTracks, deleteTrack } from '../../store/actions/services';
 
 
-function buildTracksArray(tracks) {
-  return tracks.map((track, index) => ({
-    id: `${index}`,
-    ...track
-  }))
-}
+const buildTracksArray = (tracks) => tracks.map((track, index) => ({ id: `${index}`, ...track }))
 
 class TrackingScreen extends React.Component {
 
@@ -30,9 +26,7 @@ class TrackingScreen extends React.Component {
     };
   }
 
-  componentDidMount() {
-    this.props.getTracks();
-  }
+  componentDidMount() { this.props.getTracks(); }
 
   render() {
     return (
@@ -40,14 +34,14 @@ class TrackingScreen extends React.Component {
         <SafeAreaView >
           <ScrollView >
             <View style={{ display: (this.props.tracks.array.length ? 'none' : 'flex') }}>
-              <Text style={{fontSize: 20, textAlign: 'center', marginTop: '30%'}}>Добавьте трек код посылки для отслеживания</Text>
+              <Text style={{ fontSize: 20, textAlign: 'center', marginTop: '30%' }}>Добавьте трек код посылки для отслеживания</Text>
             </View>
             <FlatList
               data={buildTracksArray(this.props.tracks.array)}
               renderItem={({ item }) => <TrackItems {...{
                 ...item,
                 actions: {
-                  deleteTrack: (index) => this.props.deleteTrack(index),
+                  deleteTrack: (index) => this.props.deleteTrack(this, index),
                   showHistory: (navigation) => navigation.navigate('TrackingHistory', { item }),
                   displayActions: (index) => this.setState({ activeItem: this.state.activeItem == index ? -1 : index })
                 },
@@ -69,9 +63,7 @@ class TrackingScreen extends React.Component {
   }
 }
 
-TrackingScreen.navigationOptions = {
-  title: 'Отслеживание отправлений'
-};
+TrackingScreen.navigationOptions = { title: 'Почтовые отправления' };
 
 
 const styles = StyleSheet.create({
@@ -85,17 +77,29 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = state => ({
-  tracks: state.services.tracks
-});
+const mapStateToProps = state => ({ tracks: state.services.tracks });
 
 const mapDispatchToProps = dispatch => ({
   getTracks: () => dispatch(getTracks()),
-  deleteTrack: (index) => dispatch(deleteTrack(index))
+  deleteTrack: (state, index) => {
+    Alert.alert(
+      '',
+      'Удалить отправление?',
+      [
+        {
+          text: 'Да',
+          onPress: () => {
+            dispatch(deleteTrack(index))
+            state.setState({ activeItem: -1 })
+          },
+          style: 'cancel',
+        },
+        { text: 'Нет' },
+      ],
+      { cancelable: false }
+    );
+  }
 })
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(TrackingScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(TrackingScreen)
 

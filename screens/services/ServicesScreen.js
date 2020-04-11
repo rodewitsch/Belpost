@@ -13,7 +13,7 @@ import ListItem from '../../components/ListItems';
 const DATA = [
   {
     id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-    title: 'Слежение за отправлениями',
+    title: 'Почтовые отправления',
     icon: 'ios-cube',
     color: '#72a234',
     action: (navigation) => navigation.navigate('Tracking')
@@ -40,38 +40,10 @@ const DATA = [
     action: (navigation) => navigation.navigate('Archive')
   },
   {
-    id: '58694a0f-3da1-471f-bd96-145571e29d80',
-    title: 'Вызов курьера',
-    icon: 'ios-bicycle',
-    color: '#ffb602',
-    action: () => alert('Функционал не реализован')
-  },
-  {
     id: '58694a0f-3da1-471f-bd96-145571e29d81',
-    title: 'Подписка',
+    title: 'Новости',
     icon: 'ios-paper',
     color: '#02b1b1',
-    action: () => alert('Функционал не реализован')
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d82',
-    title: 'Почтовые бланки',
-    icon: 'ios-document',
-    color: '#c14de6',
-    action: () => alert('Функционал не реализован')
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d83',
-    title: 'Платежи. Перевод денег',
-    icon: 'ios-wallet',
-    color: '#0f9d59',
-    action: () => alert('Функционал не реализован')
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d84',
-    title: 'Электронные марки',
-    icon: 'logo-markdown',
-    color: '#d92b24',
     action: () => alert('Функционал не реализован')
   }
 ];

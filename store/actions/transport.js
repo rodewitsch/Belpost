@@ -16,14 +16,13 @@ export const SET_HIDDEN_FIELDS = (fields) => ({
 });
 
 export function getCookiesAsync() {
-    console.log('getCookiesAsync');
     return function (dispatch) {
         dispatch(REQUEST_COOKIES());
 
         return fetch('https://webservices.belpost.by/PersonalCabinet/PersonalCabinet.aspx')
             .then(
                 response => Promise.all([response.headers, response.text()]),
-                error => console.log('error', error)
+                error => alert(error)
             )
             .then(function ([headers, text]) {
                 const cookies = headers.map['set-cookie'];

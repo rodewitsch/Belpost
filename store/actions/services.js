@@ -4,30 +4,20 @@ import HTMLParser from 'fast-html-parser';
 import { getHiddenFields } from './transport';
 import moment from 'moment';
 
-export const REQUEST_TRACKS = () => ({
-    type: 'REQUEST_TRACKS',
-});
+export const REQUEST_TRACKS = () => ({ type: 'REQUEST_TRACKS' });
 
-export const RECEIVE_TRACKS = (tracks) => ({
-    type: 'RECEIVE_TRACKS',
-    tracks
-})
+export const RECEIVE_TRACKS = (tracks) => ({ type: 'RECEIVE_TRACKS', tracks })
 
-export const REQUEST_TRACK_HISTORY = () => ({
-    type: 'REQUEST_TRACK_HISTORY',
-});
+export const REQUEST_TRACK_HISTORY = () => ({ type: 'REQUEST_TRACK_HISTORY' });
 
-export const RECEIVE_TRACK_HISTORY = (index, history) => ({
-    type: 'RECEIVE_TRACK_HISTORY',
-    index,
-    history
-})
+export const RECEIVE_TRACK_HISTORY = (index, history) => ({ type: 'RECEIVE_TRACK_HISTORY', index, history })
 
+export const REQUEST_ARCHIVE = () => ({ type: 'REQUEST_ARCHIVE' })
+
+export const RECEIVE_ARCHIVE = (archive) => ({ type: 'RECEIVE_ARCHIVE', archive })
 
 export function getTracks() {
-
     return function (dispatch, getState) {
-        console.log('getTracks', getState());
         dispatch(REQUEST_TRACKS());
         const params = build({
             'ToolkitScriptManager1': 'UpdatePanel2|LinkBtnSearch',
@@ -64,7 +54,6 @@ export function getTracks() {
 }
 
 export function getTrackHistory(trackIndex) {
-    console.log('getTrackHistory');
     return function (dispatch, getState) {
         dispatch(REQUEST_TRACK_HISTORY());
         const params = build({
@@ -204,6 +193,55 @@ export function deleteTrack(index) {
             })
             .catch(function (err) {
                 console.error(err);
+            })
+    }
+}
+
+export function getArchive() {
+    return function (dispatch, getState) {
+        dispatch(REQUEST_ARCHIVE());
+        const params = build({
+            'ToolkitScriptManager1': `UpdatePanel2|LButnArch`,
+            '__EVENTTARGET': `LButnArch`,
+            '__VIEWSTATE': getState().transport.hiddenFields.__VIEWSTATE,
+            '__VIEWSTATEGENERATOR': getState().transport.hiddenFields.__VIEWSTATEGENERATOR,
+            '__EVENTVALIDATION': getState().transport.hiddenFields.__EVENTVALIDATION
+        });
+
+        return fetch(
+            'https://webservices.belpost.by/PersonalCabinet/PersonalCabinet.aspx',
+            {
+                method: 'POST',
+                body: params,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'User-Agent': ' Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
+                    'Cookie': getState().transport.cookies.value
+                }
+            })
+            .then(
+                response => response.text(),
+                error => console.log('error', error)
+            )
+            .then(function (data) {
+                const html = data ? HTMLParser.parse(data) : null;
+                getHiddenFields(dispatch, data);
+                let archive = [];
+                const table = html.querySelector(`#GridViewArch`);
+                const rows = table.querySelectorAll('tr');
+                archive = rows
+                    .slice(1)
+                    .map((row, index) => {
+                        return {
+                            id: `${index}`,
+                            event: row.childNodes[1].text.trim(),
+                            trackCode: row.childNodes[2].text.trim(),
+                            date: moment(row.childNodes[4].text.trim(), 'DD.MM.YYYY HH:mm:ss'),
+                            name: row.childNodes[5].text.trim()
+                        }
+                    })
+                    .sort((a, b) => a.date.isBefore(b.date) ? -1 : 1)
+                dispatch(RECEIVE_ARCHIVE(archive));
             })
     }
 }
