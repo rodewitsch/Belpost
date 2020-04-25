@@ -44,7 +44,7 @@ const DATA = [
     title: 'Новости',
     icon: 'ios-paper',
     color: '#02b1b1',
-    action: () => alert('Функционал не реализован')
+    action: (navigation) => navigation.navigate('News')
   }
 ];
 

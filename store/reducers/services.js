@@ -6,6 +6,10 @@ const initialState = {
     archive: {
         isFetching: false,
         array: []
+    },
+    news: {
+        isFetching: false,
+        array: []
     }
 }
 
@@ -18,6 +22,14 @@ export default (state = initialState, action) => {
         case 'RECEIVE_TRACKS': return {
             ...state,
             tracks: { isFetching: false, array: action.tracks }
+        }
+        case 'REQUEST_NEWS': return {
+            ...state,
+            news: { isFetching: true, array: [] }
+        }
+        case 'RECEIVE_NEWS': return {
+            ...state,
+            news: { isFetching: false, array: action.news }
         }
         case 'REQUEST_TRACK_HISTORY': return {
             ...state,

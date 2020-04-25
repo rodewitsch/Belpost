@@ -37,6 +37,7 @@ class TrackingScreen extends React.Component {
               <Text style={{ fontSize: 20, textAlign: 'center', marginTop: '30%' }}>Добавьте трек код посылки для отслеживания</Text>
             </View>
             <FlatList
+              style={{marginBottom: 100}}
               data={buildTracksArray(this.props.tracks.array)}
               renderItem={({ item }) => <TrackItems {...{
                 ...item,

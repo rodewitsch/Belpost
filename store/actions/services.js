@@ -2,11 +2,34 @@ import { fetch } from 'cross-fetch';
 import { build } from 'search-params'
 import HTMLParser from 'fast-html-parser';
 import { getHiddenFields } from './transport';
+import iconv from 'iconv-lite';
+import { Buffer } from 'buffer';
 import moment from 'moment';
+
+FileReader.prototype.readAsArrayBuffer = function (blob) {
+    if (this.readyState === this.LOADING) throw new Error("InvalidStateError");
+    this._setReadyState(this.LOADING);
+    this._result = null;
+    this._error = null;
+    const fr = new FileReader();
+    fr.onloadend = () => {
+        const content = atob(fr.result.substr("data:application/octet-stream;base64,".length));
+        const buffer = new ArrayBuffer(content.length);
+        const view = new Uint8Array(buffer);
+        view.set(Array.from(content).map(c => c.charCodeAt(0)));
+        this._result = buffer;
+        this._setReadyState(this.DONE);
+    };
+    fr.readAsDataURL(blob);
+}
 
 export const REQUEST_TRACKS = () => ({ type: 'REQUEST_TRACKS' });
 
 export const RECEIVE_TRACKS = (tracks) => ({ type: 'RECEIVE_TRACKS', tracks })
+
+export const REQUEST_NEWS = () => ({ type: 'REQUEST_NEWS' });
+
+export const RECEIVE_NEWS = (news) => ({ type: 'RECEIVE_NEWS', news })
 
 export const REQUEST_TRACK_HISTORY = () => ({ type: 'REQUEST_TRACK_HISTORY' });
 
@@ -46,6 +69,26 @@ export function getTracks() {
                 getHiddenFields(dispatch, data);
                 const tracks = parseTracks(data);
                 dispatch(RECEIVE_TRACKS(tracks));
+            })
+            .catch(function (err) {
+                console.error(err);
+            })
+    }
+}
+
+export function getNews() {
+    return function (dispatch) {
+        dispatch(REQUEST_NEWS());
+
+        return fetch('http://www.belpost.by/press-centre/news-company/')
+            .then(
+                response => response.arrayBuffer(),
+                error => console.log('error', error)
+            )
+            .then(function (data) {
+                data = iconv.decode(Buffer.from(data), 'win1251').toString();
+                const news = parseNews(data);
+                dispatch(RECEIVE_NEWS(news));
             })
             .catch(function (err) {
                 console.error(err);
@@ -240,7 +283,7 @@ export function getArchive() {
                             name: row.childNodes[5].text.trim()
                         }
                     })
-                    .sort((a, b) => a.date.isBefore(b.date) ? -1 : 1)
+                    .sort((a, b) => a.date.isBefore(b.date) ? 1 : -1)
                 dispatch(RECEIVE_ARCHIVE(archive));
             })
     }
@@ -257,4 +300,33 @@ function parseTracks(data) {
         tracks.push({ track: track.rawText.substring(0, openBrakeIndex), title: track.rawText.substring(openBrakeIndex + 1, closeBrakeIndex) });
     }
     return tracks;
+}
+
+function parseNews(data) {
+    const html = data ? HTMLParser.parse(data) : null;
+    const newsArea = html.querySelectorAll(`div.news-div`);
+    let news = [];
+    for (let i = 0; i < newsArea.length; i++) {
+        let newsItem = {
+            image: null,
+            title: null,
+            date: null,
+            description: null,
+            link: null
+        };
+        const imageEl = newsArea[i].querySelector('img'),
+            titleEl = newsArea[i].querySelector('.link2'),
+            descriptionEl = newsArea[i].querySelector('.link2 p'),
+            dateEl = newsArea[i].querySelector('.date');
+        if (imageEl) newsItem.image = `http://www.belpost.by${imageEl.attributes.src}`;
+        if (titleEl) {
+            newsItem.title = (titleEl.childNodes[0].rawText || titleEl.childNodes[1].rawText).toUpperCase();
+            newsItem.link = titleEl.childNodes[0].attributes.href;
+            if(newsItem.link.indexOf('http') == -1) newsItem.link = `http://www.belpost.by${newsItem.link}`
+        }
+        if (descriptionEl) newsItem.description = descriptionEl.rawText;
+        if (dateEl) newsItem.date = dateEl.rawText;
+        news.push(newsItem);
+    }
+    return news;
 }

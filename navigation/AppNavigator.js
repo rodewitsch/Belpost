@@ -19,6 +19,8 @@ import ArchiveScreen from '../screens/services/ArchiveScreen';
 import AddTrackScreen from '../screens/services/AddTrackScreen';
 import TrackingHistoryScreen from '../screens/services/TrackingHistoryScreen';
 import SignInScreen from '../screens/SignInScreen';
+import NewsScreen from '../screens/services/NewsScreen';
+import { NewsItemScreen } from '../screens/services/NewsItemScreen';
 
 const config = Platform.select({
   web: { headerMode: 'screen' },
@@ -54,7 +56,9 @@ const ServicesStack = createStackNavigator(
     TrackingHistory: TrackingHistoryScreen,
     Redirect: RedirectingScreen,
     EmailNotice: EmailNoticeScreen,
-    Archive: ArchiveScreen
+    Archive: ArchiveScreen,
+    News: NewsScreen,
+    NewsItem: NewsItemScreen
   },
   config
 );
