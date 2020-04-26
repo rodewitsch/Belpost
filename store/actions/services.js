@@ -23,6 +23,32 @@ FileReader.prototype.readAsArrayBuffer = function (blob) {
     fr.readAsDataURL(blob);
 }
 
+function atob(input) {
+    var keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
+    var output = ''
+    var chr1, chr2, chr3
+    var enc1, enc2, enc3, enc4
+    var i = 0
+    input = input.replace(/[^A-Za-z0-9\+\/\=]/g, '')
+    do {
+        enc1 = keyStr.indexOf(input.charAt(i++))
+        enc2 = keyStr.indexOf(input.charAt(i++))
+        enc3 = keyStr.indexOf(input.charAt(i++))
+        enc4 = keyStr.indexOf(input.charAt(i++))
+        chr1 = (enc1 << 2) | (enc2 >> 4)
+        chr2 = ((enc2 & 15) << 4) | (enc3 >> 2)
+        chr3 = ((enc3 & 3) << 6) | enc4
+        output = output + String.fromCharCode(chr1)
+        if (enc3 !== 64) {
+            output = output + String.fromCharCode(chr2)
+        }
+        if (enc4 !== 64) {
+            output = output + String.fromCharCode(chr3)
+        }
+    } while (i < input.length)
+    return output
+}
+
 export const REQUEST_TRACKS = () => ({ type: 'REQUEST_TRACKS' });
 
 export const RECEIVE_TRACKS = (tracks) => ({ type: 'RECEIVE_TRACKS', tracks })
@@ -79,11 +105,10 @@ export function getTracks() {
 export function getNews() {
     return function (dispatch) {
         dispatch(REQUEST_NEWS());
-
         return fetch('http://www.belpost.by/press-centre/news-company/')
             .then(
                 response => response.arrayBuffer(),
-                error => console.log('error', error)
+                error => alert(error)
             )
             .then(function (data) {
                 data = iconv.decode(Buffer.from(data), 'win1251').toString();
@@ -91,7 +116,7 @@ export function getNews() {
                 dispatch(RECEIVE_NEWS(news));
             })
             .catch(function (err) {
-                console.error(err);
+                alert(err);
             })
     }
 }
@@ -322,7 +347,7 @@ function parseNews(data) {
         if (titleEl) {
             newsItem.title = (titleEl.childNodes[0].rawText || titleEl.childNodes[1].rawText).toUpperCase();
             newsItem.link = titleEl.childNodes[0].attributes.href;
-            if(newsItem.link.indexOf('http') == -1) newsItem.link = `http://www.belpost.by${newsItem.link}`
+            if (newsItem.link.indexOf('http') == -1) newsItem.link = `http://www.belpost.by${newsItem.link}`
         }
         if (descriptionEl) newsItem.description = descriptionEl.rawText;
         if (dateEl) newsItem.date = dateEl.rawText;

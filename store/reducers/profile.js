@@ -6,7 +6,13 @@ const initialState = {
     },
     profile: {
         isFetching: false,
-        name: null
+        name: null,
+        secondName: null,
+        firstName: null,
+        middleName: null,
+        email: null,
+        mobileOperator: null,
+        phone: null
     },
     addresses: {
         isFetching: false,
@@ -33,6 +39,14 @@ export default (state = initialState, action) => {
             ...state,
             authorization: { isFetching: false, status: false, error: 'Ошибка авторизации' },
             profile: { isFetching: false, name: null }
+        }
+        case 'REQUEST_PROFILE': return {
+            ...state,
+            profile: { ...state.profile, isFetching: true }
+        }
+        case 'RECEIVE_PROFILE': return {
+            ...state,
+            profile: { ...action.profile, isFetching: false }
         }
         case 'SELECTING_ADDRESS': return {
             ...state,

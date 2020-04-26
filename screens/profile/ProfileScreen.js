@@ -11,6 +11,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { SafeAreaView } from 'react-navigation';
 import { FlatList } from 'react-native-gesture-handler';
 import ListItem from '../../components/ListItems';
+import { getProfile } from '../../store/actions/profile';
 
 const DATA = [
   {
@@ -54,18 +55,9 @@ class ProfileScreen extends React.Component {
 
   constructor(props) {
     super(props);
-    // TODO: временные данные
-    this.state = {
-      profile: {
-        firstName: 'Иван',
-        secondName: 'Иванов',
-        lastName: 'Иванович',
-        email: 'test@test.test',
-        phoneNumer: '+43847823748327482',
-        mobileOperator: 'Velcom'
-      }
-    };
   }
+
+  componentDidMount() { this.props.getProfile(); }
 
   render() {
     return (<View style={styles.container} >
@@ -78,11 +70,11 @@ class ProfileScreen extends React.Component {
         </TouchableOpacity>
         <View>
           <Text style={{ fontSize: 15, fontWeight: 'bold', paddingVertical: 5 }}>Данные профиля</Text>
-          <Text style={{ fontSize: 15, paddingVertical: 3 }}>Фамилия: {this.state.profile.secondName}</Text>
-          <Text style={{ fontSize: 15, paddingVertical: 3 }}>Имя: {this.state.profile.firstName}</Text>
-          <Text style={{ fontSize: 15, paddingVertical: 3 }}>Отчество: {this.state.profile.lastName}</Text>
-          <Text style={{ fontSize: 15, paddingVertical: 3 }}>Email: {this.state.profile.email}</Text>
-          <Text style={{ fontSize: 15, paddingVertical: 3 }}>{this.state.profile.mobileOperator} {this.state.profile.phoneNumer}</Text>
+          <Text style={{ fontSize: 15, paddingVertical: 3 }}>Фамилия: {this.props.profile.lastName}</Text>
+          <Text style={{ fontSize: 15, paddingVertical: 3 }}>Имя: {this.props.profile.firstName}</Text>
+          <Text style={{ fontSize: 15, paddingVertical: 3 }}>Отчество: {this.props.profile.middleName}</Text>
+          <Text style={{ fontSize: 15, paddingVertical: 3 }}>Email: {this.props.profile.email}</Text>
+          <Text style={{ fontSize: 15, paddingVertical: 3 }}>{this.props.profile.mobileOperator} {this.props.profile.phoneNumer}</Text>
         </View>
       </View>
 
@@ -150,6 +142,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  getProfile: () => dispatch(getProfile())
 })
 
 export default connect(

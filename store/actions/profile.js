@@ -1,37 +1,24 @@
 import { fetch } from 'cross-fetch';
 import { build } from 'search-params'
 import { getHiddenFields } from './transport';
+import HTMLParser, { parse } from 'fast-html-parser';
 import * as Keychain from 'react-native-keychain';
 
-export const SIGNING_IN = (email, password) => ({
-    type: 'SIGNING_IN',
-    email,
-    password
-});
+export const SIGNING_IN = (email, password) => ({ type: 'SIGNING_IN', email, password });
 
-export const SIGNING_ERROR = (text) => ({
-    type: 'SIGNING_ERROR',
-    text
-});
+export const SIGNING_ERROR = (text) => ({ type: 'SIGNING_ERROR', text });
 
-export const SELECTING_ADDRESS = (selected) => ({
-    type: 'SELECTING_ADDRESS',
-    selected
-});
+export const SELECTING_ADDRESS = (selected) => ({ type: 'SELECTING_ADDRESS', selected });
 
-export const DELETING_ADDRESS = (deleted) => ({
-    type: 'DELETING_ADDRESS',
-    deleted
-});
+export const DELETING_ADDRESS = (deleted) => ({ type: 'DELETING_ADDRESS', deleted });
 
-export const SIGNED_IN = (user) => ({
-    type: 'SIGNED_IN',
-    user
-});
+export const SIGNED_IN = (user) => ({ type: 'SIGNED_IN', user });
 
-export const SIGN_OUT = () => ({
-    type: 'SIGN_OUT'
-});
+export const SIGN_OUT = () => ({ type: 'SIGN_OUT' });
+
+export const REQUEST_PROFILE = () => ({ type: 'REQUEST_PROFILE' });
+
+export const RECEIVE_PROFILE = (profile) => ({ type: 'RECEIVE_PROFILE', profile })
 
 export function signIn(email, password) {
     console.log('signIn');
@@ -92,4 +79,83 @@ export function deleteAddress(deletedItem) {
     return function (dispatch) {
         dispatch(DELETING_ADDRESS(deletedItem));
     }
+}
+
+export function getProfile() {
+    return function (dispatch, getState) {
+        dispatch(REQUEST_PROFILE());
+
+        return fetch(
+            'https://webservices.belpost.by/PersonalCabinet/Profile.aspx',
+            {
+                method: 'GET',
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36 Edg/81.0.416.64',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Cookie': getState().transport.cookies.value
+                }
+            }
+        )
+            .then(
+                response => response.text(),
+                error => console.log('error', error)
+            )
+            .then(
+                response => {
+                    getHiddenFields(dispatch, response);
+                    const params = build({
+                        'ToolkitScriptManager1': 'UpdatePanel1|BtnPersonalData',
+                        'ToolkitScriptManager1_HiddenField': '',
+                        '__EVENTTARGET': 'BtnPersonalData',
+                        '__EVENTARGUMENT': '',
+                        '__VIEWSTATE': getState().transport.hiddenFields.__VIEWSTATE,
+                        '__VIEWSTATEGENERATOR': getState().transport.hiddenFields.__VIEWSTATEGENERATOR,
+                        '__EVENTVALIDATION': getState().transport.hiddenFields.__EVENTVALIDATION,
+                        '__ASYNCPOST': true
+                    });
+
+                    return fetch(
+                        'https://webservices.belpost.by/PersonalCabinet/Profile.aspx',
+                        {
+                            method: 'POST',
+                            body: params,
+                            headers: {
+                                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36 Edg/81.0.416.64',
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'Cookie': getState().transport.cookies.value
+                            }
+                        })
+                }
+            )
+            .then(
+                response => response.text(),
+                error => console.log('error', error)
+            )
+            .then(function (response) {
+                getHiddenFields(dispatch, response);
+                const profile = parseProfile(response);
+                return dispatch(RECEIVE_PROFILE(profile));
+            })
+            .catch(function (err) {
+                console.error(err);
+            })
+    }
+}
+
+function parseProfile(data) {
+    const html = data ? HTMLParser.parse(data) : null;
+    let profile = {};
+    const lastNameInput = html.querySelector(`#PersonalPanel #TxtLName`),
+        firstNameInput = html.querySelector(`#PersonalPanel #TxtFName`),
+        middleNameIntput = html.querySelector(`#PersonalPanel #TxtMName`),
+        emailInput = html.querySelector(`#PersonalPanel #TxtEmail`),
+        phoneInput = html.querySelector(`#PersonalPanel #TxtPhone`),
+        mobileOperatorInput = html.querySelectorAll(`#PersonalPanel #DDLOper option`);
+    if (lastNameInput) profile.lastName = lastNameInput.attributes.value;
+    if (firstNameInput) profile.firstName = firstNameInput.attributes.value;
+    if (middleNameIntput) profile.middleName = middleNameIntput.attributes.value;
+    if (emailInput) profile.email = emailInput.attributes.value;
+    if (phoneInput) profile.phoneNumer = phoneInput.attributes.value;
+    if (mobileOperatorInput && mobileOperatorInput.length) profile.mobileOperator = mobileOperatorInput.find(operator => operator.attributes.selected).attributes.value;
+    return profile;
 }
