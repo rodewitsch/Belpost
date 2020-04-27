@@ -142,6 +142,13 @@ export function getProfile() {
     }
 }
 
+export function signOut() {
+    return function (dispatch) {
+        Keychain.resetGenericPassword();
+        dispatch(SIGN_OUT());
+    }
+}
+
 function parseProfile(data) {
     const html = data ? HTMLParser.parse(data) : null;
     let profile = {};
@@ -156,6 +163,6 @@ function parseProfile(data) {
     if (middleNameIntput) profile.middleName = middleNameIntput.attributes.value;
     if (emailInput) profile.email = emailInput.attributes.value;
     if (phoneInput) profile.phoneNumer = phoneInput.attributes.value;
-    if (mobileOperatorInput && mobileOperatorInput.length) profile.mobileOperator = mobileOperatorInput.find(operator => operator.attributes.selected).attributes.value;
+    if (mobileOperatorInput && mobileOperatorInput.length) profile.mobileOperators = mobileOperatorInput.map(operator => ({ value: operator.attributes.value, selected: !!operator.attributes.selected }));
     return profile;
 }

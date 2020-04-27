@@ -10,11 +10,11 @@ import {
     KeyboardAvoidingView
 } from 'react-native'
 import { getCookiesAsync } from '../store/actions/transport';
-import { signIn } from '../store/actions/profile';
+import { signIn, signOut } from '../store/actions/profile';
 
 import * as Keychain from 'react-native-keychain';
 
-class AuthLoadingScreen extends React.Component {
+class SignInScreen extends React.Component {
 
     constructor(props) {
         super(props);
@@ -25,12 +25,18 @@ class AuthLoadingScreen extends React.Component {
     }
 
     componentDidMount() {
-        this.props.getCookies();
-        Keychain.getGenericPassword().then(credentials => {
-            if (credentials) {
-                this.setState({ email: credentials.username, password: credentials.password });
-            }
-        });
+        if (this.props.navigation.state &&
+            this.props.navigation.state.params &&
+            this.props.navigation.state.params.clear) {
+            this.props.signOut();
+        } else {
+            this.props.getCookies();
+            Keychain.getGenericPassword().then(credentials => {
+                if (credentials) {
+                    this.setState({ email: credentials.username, password: credentials.password });
+                }
+            });
+        }
     }
 
     componentDidUpdate() {
@@ -81,6 +87,10 @@ class AuthLoadingScreen extends React.Component {
     }
 }
 
+SignInScreen.navigationOptions = {
+    header: null
+  };
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -100,10 +110,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     getCookies: () => dispatch(getCookiesAsync()),
-    signIn: (email, password) => dispatch(signIn(email, password))
+    signIn: (email, password) => dispatch(signIn(email, password)),
+    signOut: () => dispatch(signOut())
 })
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(AuthLoadingScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(SignInScreen)

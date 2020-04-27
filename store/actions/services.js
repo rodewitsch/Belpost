@@ -68,25 +68,46 @@ export const RECEIVE_ARCHIVE = (archive) => ({ type: 'RECEIVE_ARCHIVE', archive 
 export function getTracks() {
     return function (dispatch, getState) {
         dispatch(REQUEST_TRACKS());
-        const params = build({
-            'ToolkitScriptManager1': 'UpdatePanel2|LinkBtnSearch',
-            '__EVENTTARGET': 'LinkBtnSearch',
-            '__VIEWSTATE': getState().transport.hiddenFields.__VIEWSTATE,
-            '__VIEWSTATEGENERATOR': getState().transport.hiddenFields.__VIEWSTATEGENERATOR,
-            '__EVENTVALIDATION': getState().transport.hiddenFields.__EVENTVALIDATION
-        });
 
         return fetch(
             'https://webservices.belpost.by/PersonalCabinet/PersonalCabinet.aspx',
             {
-                method: 'POST',
-                body: params,
+                method: 'GET',
                 headers: {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36 Edg/81.0.416.64',
                     'Content-Type': 'application/x-www-form-urlencoded',
-                    'User-Agent': ' Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
                     'Cookie': getState().transport.cookies.value
                 }
-            })
+            }
+        )
+            .then(
+                response => response.text(),
+                error => console.log('error', error)
+            )
+            .then(
+                response => {
+                    getHiddenFields(dispatch, response);
+                    const params = build({
+                        'ToolkitScriptManager1': 'UpdatePanel2|LinkBtnSearch',
+                        '__EVENTTARGET': 'LinkBtnSearch',
+                        '__VIEWSTATE': getState().transport.hiddenFields.__VIEWSTATE,
+                        '__VIEWSTATEGENERATOR': getState().transport.hiddenFields.__VIEWSTATEGENERATOR,
+                        '__EVENTVALIDATION': getState().transport.hiddenFields.__EVENTVALIDATION
+                    });
+
+                    return fetch(
+                        'https://webservices.belpost.by/PersonalCabinet/PersonalCabinet.aspx',
+                        {
+                            method: 'POST',
+                            body: params,
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'User-Agent': ' Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
+                                'Cookie': getState().transport.cookies.value
+                            }
+                        })
+                }
+            )
             .then(
                 response => response.text(),
                 error => console.log('error', error)
@@ -268,24 +289,43 @@ export function deleteTrack(index) {
 export function getArchive() {
     return function (dispatch, getState) {
         dispatch(REQUEST_ARCHIVE());
-        const params = build({
-            'ToolkitScriptManager1': `UpdatePanel2|LButnArch`,
-            '__EVENTTARGET': `LButnArch`,
-            '__VIEWSTATE': getState().transport.hiddenFields.__VIEWSTATE,
-            '__VIEWSTATEGENERATOR': getState().transport.hiddenFields.__VIEWSTATEGENERATOR,
-            '__EVENTVALIDATION': getState().transport.hiddenFields.__EVENTVALIDATION
-        });
 
         return fetch(
             'https://webservices.belpost.by/PersonalCabinet/PersonalCabinet.aspx',
             {
-                method: 'POST',
-                body: params,
+                method: 'GET',
                 headers: {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36 Edg/81.0.416.64',
                     'Content-Type': 'application/x-www-form-urlencoded',
-                    'User-Agent': ' Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
                     'Cookie': getState().transport.cookies.value
                 }
+            }
+        )
+            .then(
+                response => response.text(),
+                error => console.log('error', error)
+            )
+            .then(response => {
+                getHiddenFields(dispatch, response);
+                const params = build({
+                    'ToolkitScriptManager1': `UpdatePanel2|LButnArch`,
+                    '__EVENTTARGET': `LButnArch`,
+                    '__VIEWSTATE': getState().transport.hiddenFields.__VIEWSTATE,
+                    '__VIEWSTATEGENERATOR': getState().transport.hiddenFields.__VIEWSTATEGENERATOR,
+                    '__EVENTVALIDATION': getState().transport.hiddenFields.__EVENTVALIDATION
+                });
+
+                return fetch(
+                    'https://webservices.belpost.by/PersonalCabinet/PersonalCabinet.aspx',
+                    {
+                        method: 'POST',
+                        body: params,
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'User-Agent': ' Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
+                            'Cookie': getState().transport.cookies.value
+                        }
+                    })
             })
             .then(
                 response => response.text(),

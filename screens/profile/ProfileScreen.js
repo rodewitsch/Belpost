@@ -11,7 +11,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { SafeAreaView } from 'react-navigation';
 import { FlatList } from 'react-native-gesture-handler';
 import ListItem from '../../components/ListItems';
-import { getProfile } from '../../store/actions/profile';
+import { getProfile, signOut } from '../../store/actions/profile';
 
 const DATA = [
   {
@@ -47,7 +47,7 @@ const DATA = [
     title: 'Выйти уз учетной записи',
     icon: 'ios-exit',
     color: '#d92b24',
-    action: (navigation) => alert('Выход из учетки')
+    action: (navigation) => navigation.navigate('SignIn', { clear: true })
   },
 ];
 
@@ -74,7 +74,7 @@ class ProfileScreen extends React.Component {
           <Text style={{ fontSize: 15, paddingVertical: 3 }}>Имя: {this.props.profile.firstName}</Text>
           <Text style={{ fontSize: 15, paddingVertical: 3 }}>Отчество: {this.props.profile.middleName}</Text>
           <Text style={{ fontSize: 15, paddingVertical: 3 }}>Email: {this.props.profile.email}</Text>
-          <Text style={{ fontSize: 15, paddingVertical: 3 }}>{this.props.profile.mobileOperator} {this.props.profile.phoneNumer}</Text>
+          <Text style={{ fontSize: 15, paddingVertical: 3 }}>{((this.props.profile.mobileOperators || []).find(el => el.selected) || {}).value} {this.props.profile.phoneNumer}</Text>
         </View>
       </View>
 
