@@ -89,7 +89,7 @@ class SignInScreen extends React.Component {
 
 SignInScreen.navigationOptions = {
     header: null
-  };
+};
 
 const styles = StyleSheet.create({
     container: {
